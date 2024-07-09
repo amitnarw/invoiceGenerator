@@ -7,6 +7,7 @@ import { HiOutlineRefresh } from "react-icons/hi";
 
 export default function Home() {
   const inputFile: any = useRef();
+  const dateRef: any = useRef();
 
   const [file, setFile] = useState();
 
@@ -27,10 +28,13 @@ export default function Home() {
     poNumber: "PO Number",
     poNumberTxt: "",
     item: "Item",
-    description: "",
-    quantity: 1,
-    rate: 0,
-    amount: 0,
+    quantity: "Quantity",
+    rate: "Rate",
+    amount: "Amount",
+    itemTxt1: "",
+    quantityTxt1: 1,
+    rateTxt1: 0,
+    amountTxt1: 0,
     notes: "Notes",
     notesTxt: "",
     terms: "Terms",
@@ -63,9 +67,14 @@ export default function Home() {
     inputFile.current.click();
   };
 
+  const handleSelectDateClick = () => {
+    dateRef.current.showPicker();
+  };
+
   const handleSetText = (e: any) => {
     let name = e.target.name;
     let value = e.target.value;
+    console.log(name, value);
     setText((prevText: any) => ({ ...prevText, [name]: value }));
   };
 
@@ -85,7 +94,7 @@ export default function Home() {
               onClick={handleSelectFileClick}
             >
               {file ? (
-                <img src={file} alt="logo"></img>
+                <img src={URL.createObjectURL(file)} alt="logo"></img>
               ) : (
                 <>
                   <BiSolidImageAdd />
@@ -95,7 +104,9 @@ export default function Home() {
             </button>
             <div className="lg:w-2/6 w-full flex flex-col gap-3 lg:items-end lg:mt-0 mt-2">
               <input
+                name="invoice"
                 type="text"
+                accept="image/*"
                 value={text.invoice}
                 onChange={handleSetText}
                 className="inputHoverShow lg:text-end text-start"
@@ -108,7 +119,8 @@ export default function Home() {
               <div className="lg:w-2/4 w-1/4 flex items-center gap-1 pl-4 border-[1px] border-[#d5dbe2] rounded-md">
                 <span className="text-gray-500 text-sm">#</span>
                 <input
-                  type="text"
+                  name="page"
+                  type="number"
                   value={text.page}
                   onChange={handleSetText}
                   className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg lg:text-end text-start"
@@ -177,8 +189,10 @@ export default function Home() {
                     type="text"
                     value={text.dateTxt}
                     onChange={handleSetText}
-                    className="inputNonHoverShow text-end"
+                    onClick={handleSelectDateClick}
+                    className="inputNonHoverShow text-end cursor-pointer"
                   />
+                  {/* <input type="date" hidden ref={dateRef} /> */}
                 </div>
               </div>
               <div className="flex gap-2">
@@ -240,12 +254,14 @@ export default function Home() {
 
           <div className="flex mt-8 bg-[#192a56] text-white rounded-lg">
             <input
+              name="item"
               type="text"
               value={text.item}
               onChange={handleSetText}
               className="inputHoverShowWhite w-full"
             />
             <input
+              name="quantity"
               type="text"
               value={text.quantity}
               onChange={handleSetText}
@@ -253,12 +269,14 @@ export default function Home() {
               style={{ padding: "0px" }}
             />
             <input
+              name="rate"
               type="text"
               value={text.rate}
               onChange={handleSetText}
               className="inputHoverShowWhite w-2/12"
             />
             <input
+              name="amount"
               type="text"
               value={text.amount}
               onChange={handleSetText}
@@ -268,32 +286,32 @@ export default function Home() {
 
           <div className="flex gap-1 mt-1.5">
             <input
-              name="description"
+              name="itemTxt1"
               type="text"
               placeholder={"Description of item/service"}
-              value={text.description}
+              value={text.itemTxt1}
               onChange={handleSetText}
               className="inputNonHoverShowNoWidth w-full"
             />
             <input
-              name="quantity"
-              type="text"
-              value={text.quantity}
+              name="quantityTxt1"
+              type="number"
+              value={text.quantityTxt1}
               onChange={handleSetText}
               className="inputNonHoverShowNoWidth w-1/12"
             />
             <div className="w-2/12 flex items-center gap-1 pl-4 border-[1px] border-[#d5dbe2] rounded-md">
               <span className="text-gray-500 text-sm">$</span>
               <input
-                name="rate"
-                type="text"
-                value={text.rate}
+                name="rateTxt1"
+                type="number"
+                value={text.rateTxt1}
                 onChange={handleSetText}
                 className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg"
               />
             </div>
             <span className="w-2/12 flex items-center justify-center text-gray-500 text-sm">
-              $ {text.amount}
+              $ {text.amountTxt1}
             </span>
           </div>
 
@@ -339,7 +357,7 @@ export default function Home() {
               <div className="flex flex-col gap-1 w-full">
                 <div className="flex gap-1 items-center">
                   <input
-                  name="subtotal"
+                    name="subtotal"
                     type="text"
                     value={text.subtotal}
                     onChange={handleSetText}
@@ -351,7 +369,7 @@ export default function Home() {
                 </div>
                 <div className="flex gap-1">
                   <input
-                  name="tax"
+                    name="tax"
                     type="text"
                     value={text.tax}
                     onChange={handleSetText}
@@ -359,8 +377,8 @@ export default function Home() {
                   />
                   <div className="w-2/4 flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
                     <input
-                    name="taxTxt"
-                      type="text"
+                      name="taxTxt"
+                      type="number"
                       value={text.taxTxt}
                       onChange={handleSetText}
                       className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
@@ -392,7 +410,7 @@ export default function Home() {
                 </div>
                 <div className="flex gap-1 items-center">
                   <input
-                  name="total"
+                    name="total"
                     type="text"
                     value={text.total}
                     onChange={handleSetText}
@@ -404,7 +422,7 @@ export default function Home() {
                 </div>
                 <div className="flex gap-1">
                   <input
-                  name="amountPaid"
+                    name="amountPaid"
                     type="text"
                     value={text.amountPaid}
                     onChange={handleSetText}
@@ -413,8 +431,8 @@ export default function Home() {
                   <div className="w-2/4 flex items-center gap-1 pl-2 mr-12 mt-2 border-[1px] border-[#d5dbe2] rounded-md">
                     <span className="text-gray-500 text-sm mr-2">$</span>
                     <input
-                    name="amountPaidTxt"
-                      type="text"
+                      name="amountPaidTxt"
+                      type="number"
                       value={text.amountPaidTxt}
                       onChange={handleSetText}
                       className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
@@ -423,7 +441,7 @@ export default function Home() {
                 </div>
                 <div className="flex gap-1 items-center">
                   <input
-                  name="balanceDue"
+                    name="balanceDue"
                     type="text"
                     value={text.balanceDue}
                     onChange={handleSetText}
@@ -446,7 +464,10 @@ export default function Home() {
           <hr />
           <div>
             <p>Currency</p>
-            <select className="p-2 rounded-lg outline-none bg-white border-[1px] border-[#d5dbe2] mt-2 lg:w-full w-1/3" defaultValue={"USD"}>
+            <select
+              className="p-2 rounded-lg outline-none bg-white border-[1px] border-[#d5dbe2] mt-2 lg:w-full w-1/3"
+              defaultValue={"USD"}
+            >
               <option value="AED">AED</option>
               <option value="AFN">AFN</option>
               <option value="ALL">ALL</option>
