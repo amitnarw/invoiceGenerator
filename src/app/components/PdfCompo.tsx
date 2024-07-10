@@ -12,8 +12,6 @@ import { AiTwotoneCloseCircle } from "react-icons/ai";
 const PdfCompo = () => {
   const inputFile: any = useRef();
   const dateRef: any = useRef();
-  const printRef = useRef<HTMLDivElement>(null);
-  const elementRef = useRef<HTMLDivElement>(null);
 
   const [file, setFile] = useState<any>();
   const [text, setText] = useState<any>({
