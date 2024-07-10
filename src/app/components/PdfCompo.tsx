@@ -1,19 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { FiDownload } from "react-icons/fi";
 import { HiOutlineRefresh } from "react-icons/hi";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
-// import Pdf from "./Pdf";
 import Test from "./Test";
 import { AiTwotoneCloseCircle } from "react-icons/ai";
 
 const PdfCompo = () => {
   const inputFile: any = useRef();
   const dateRef: any = useRef();
-  const printRef = useRef<HTMLDivElement>(null);
-  const elementRef = useRef<HTMLDivElement>(null);
 
   const [file, setFile] = useState<any>();
   const [text, setText] = useState<any>({
