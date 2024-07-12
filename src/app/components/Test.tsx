@@ -7,23 +7,15 @@ import {
   View,
   Document,
   StyleSheet,
-  Image,
-  Link,
   Font,
   PDFDownloadLink,
 } from "@react-pdf/renderer";
-import { pdfjs } from "react-pdf";
 import dynamic from "next/dynamic";
 //I added this imports to add suport to textLayer and anotations
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { isMobile } from "react-device-detect";
-
-//this due a Worker not found error
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   "pdfjs-dist/build/pdf.worker.min.js",
-//   import.meta.url
-// ).toString();
+import { FiDownload } from "react-icons/fi";
 
 console.log(isMobile, "mobile");
 
@@ -56,9 +48,28 @@ export default function Home(props: any) {
   }, [props.text]);
 
   return (
-    <main className="flex h-screen w-full flex-col items-center">
-      <MyDocument text={text} />
-    </main>
+    <div>
+      <PDFViewer className="h-screen w-full">
+        <MyPDFDocument text={text} />
+      </PDFViewer>
+      <PDFDownloadLink
+        document={<MyPDFDocument text={text} />}
+        fileName="example.pdf"
+      >
+        {({ blob, url, loading, error }) =>
+          loading ? (
+            <button className="rounded-xl px-5 py-2 bg-red-500/50 m-auto">
+              Loading document
+            </button>
+          ) : (
+            <button className="bg-[#1abc9c] hover:bg-[#16a085] p-6 rounded-lg flex items-center justify-center gap-2 text-white duration-300 sm:w-96 w-44 m-auto mt-20">
+              <FiDownload size={15} />
+              Download
+            </button>
+          )
+        }
+      </PDFDownloadLink>
+    </div>
   );
 }
 
@@ -258,25 +269,6 @@ export default function Home(props: any) {
 //     </Page>
 //   </Document>
 // );
-
-const MyDocument = ({ text }: any) => {
-  return (
-    <div>
-      {isMobile ? (
-        <PDFDownloadLink
-          document={<MyPDFDocument text={text} />}
-          fileName="YOUR_FILE_NAME.pdf"
-        >
-          {({ loading }) => (loading ? "Loading document..." : "Download PDF")}
-        </PDFDownloadLink>
-      ) : (
-        <PDFViewer style={{ width: "100%", height: "100vh" }}>
-          <MyPDFDocument text={text} />
-        </PDFViewer>
-      )}
-    </div>
-  );
-};
 
 const MyPDFDocument = ({ text }: any) => (
   <Document>
