@@ -62,7 +62,7 @@ const PdfCompo = () => {
   const [visible, setVisible] = useState(true);
 
   const handleSelectFile = (e: any) => {
-    setFile(e.target.files[0]);
+    setFile(URL.createObjectURL(e.target.files[0]));
   };
 
   const handleSelectFileClick = () => {
@@ -130,6 +130,7 @@ const PdfCompo = () => {
           <div className="flex justify-between lg:flex-row flex-col">
             <input
               type="file"
+              accept="image/*"
               ref={inputFile}
               onChange={handleSelectFile}
               hidden
@@ -140,7 +141,8 @@ const PdfCompo = () => {
             >
               {file ? (
                 <img
-                  src={URL.createObjectURL(file)}
+                  // src={URL.createObjectURL(file)}
+                  src={file}
                   alt="logo"
                   className="object-cover w-[12vw] h-[7vw] min-w-[180px] min-h-[100px] rounded-md"
                 ></img>
@@ -367,7 +369,8 @@ const PdfCompo = () => {
             </div>
             <span className="w-2/12 flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1">
               <span className="lg:hidden inline mr-1">Amount:</span>$
-              {text.amountTxt1}
+              {/* {text.amountTxt1} */}
+              {text.quantityTxt1 * text.rateTxt1}
             </span>
           </div>
 
@@ -420,7 +423,8 @@ const PdfCompo = () => {
                     className="inputHoverShow text-end  "
                   />
                   <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                    $ {text.subtotalTxt}
+                    {/* $ {text.subtotalTxt} */}$
+                    {text.quantityTxt1 * text.rateTxt1}
                   </span>
                 </div>
                 <div className="flex gap-1">
@@ -473,7 +477,9 @@ const PdfCompo = () => {
                     className="inputHoverShow text-end"
                   />
                   <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                    $ {text.totalTxt}
+                    {/* $ {text.totalTxt} */}${" "}
+                    {text.quantityTxt1 * text.rateTxt1 +
+                      (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100}
                   </span>
                 </div>
                 <div className="flex gap-1">
@@ -504,7 +510,10 @@ const PdfCompo = () => {
                     className="inputHoverShow text-end  "
                   />
                   <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                    $ {text.balanceDueTxt}
+                    {/* $ {text.balanceDueTxt} */}${" "}
+                    {text.quantityTxt1 * text.rateTxt1 +
+                      (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100 -
+                      text.amountPaidTxt}
                   </span>
                 </div>
               </div>
@@ -720,7 +729,7 @@ const PdfCompo = () => {
         <button onClick={toggleVisible}>
           <AiTwotoneCloseCircle size={40} />
         </button>
-        <Test text={text} />
+        <Test text={text} file={file} />
       </div>
     </>
   );
