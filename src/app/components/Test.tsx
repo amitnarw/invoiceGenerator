@@ -17,11 +17,13 @@ Font.register({
   family: "OpenSans",
   fonts: [
     {
-      src: "OpenSans-Regular.ttf",
+      // src: "OpenSans-Regular.ttf",
+      src: "Roboto-Regular.ttf",
       fontWeight: 400,
     },
     {
-      src: "/OpenSans-Bold.ttf",
+      // src: "/OpenSans-Bold.ttf",
+      src: "Roboto-Bold.ttf",
       fontWeight: 700,
     },
   ],
@@ -47,7 +49,7 @@ export default function Home(props: any) {
   return (
     <div>
       {typeof window !== "undefined" && loaded && (
-        <div className="flex flex-col gap-5 h-[90vh]">
+        <div className="flex flex-col gap-3 h-[90vh]">
           <button className="bg-[#1abc9c] hover:bg-[#16a085] p-6 rounded-lg flex items-center justify-center gap-2 text-white duration-300 sm:w-96 w-44 m-auto text-lg">
             <PDFDownloadLink
               document={<MyPDFDocument text={text} file={file} />}
@@ -97,41 +99,55 @@ const MyPDFDocument = ({ text, file }: any) => (
             </Text>
             <Text style={styles.textBold}>{text?.whoIsThisTo}</Text>
           </View>
-          <View style={styles.secondDivLeftDivInside}>
-            <Text style={{ ...styles.textQues, marginBottom: "5px" }}>
-              {text?.shipTo}
-            </Text>
-            <Text style={styles.textBold}>{text?.shipToOptional}</Text>
-          </View>
+          {text?.shipToOptional && (
+            <View style={styles.secondDivLeftDivInside}>
+              <Text style={{ ...styles.textQues, marginBottom: "5px" }}>
+                {text?.shipTo}
+              </Text>
+              <Text style={styles.textBold}>{text?.shipToOptional}</Text>
+            </View>
+          )}
         </View>
         <View style={{ ...styles.secondDivLeftDiv, gap: "10px" }}>
           <View style={{ ...styles.secondDivRightDivInside, width: "60%" }}>
             <Text style={{ ...styles.textQues, textAlign: "right" }}>
               {text?.date}
             </Text>
-            <Text style={{ ...styles.textQues, textAlign: "right" }}>
-              {text?.paymentTerms}
-            </Text>
-            <Text style={{ ...styles.textQues, textAlign: "right" }}>
-              {text?.dueDate}
-            </Text>
-            <Text style={{ ...styles.textQues, textAlign: "right" }}>
-              {text?.poNumber}
-            </Text>
+            {text?.paymentTermsTxt && (
+              <Text style={{ ...styles.textQues, textAlign: "right" }}>
+                {text?.paymentTerms}
+              </Text>
+            )}
+            {text?.dueDateTxt && (
+              <Text style={{ ...styles.textQues, textAlign: "right" }}>
+                {text?.dueDate}
+              </Text>
+            )}
+            {text?.poNumberTxt && (
+              <Text style={{ ...styles.textQues, textAlign: "right" }}>
+                {text?.poNumber}
+              </Text>
+            )}
           </View>
           <View style={{ ...styles.secondDivRightDivInside, width: "40%" }}>
             <Text style={{ ...styles.textAns, textAlign: "right" }}>
               {text?.dateTxt}
             </Text>
-            <Text style={{ ...styles.textAns, textAlign: "right" }}>
-              {text?.paymentTermsTxt}
-            </Text>
-            <Text style={{ ...styles.textAns, textAlign: "right" }}>
-              {text?.dueDateTxt}
-            </Text>
-            <Text style={{ ...styles.textAns, textAlign: "right" }}>
-              {text?.poNumberTxt}
-            </Text>
+            {text?.paymentTermsTxt && (
+              <Text style={{ ...styles.textAns, textAlign: "right" }}>
+                {text?.paymentTermsTxt}
+              </Text>
+            )}
+            {text?.dueDateTxt && (
+              <Text style={{ ...styles.textAns, textAlign: "right" }}>
+                {text?.dueDateTxt}
+              </Text>
+            )}
+            {text?.poNumberTxt && (
+              <Text style={{ ...styles.textAns, textAlign: "right" }}>
+                {text?.poNumberTxt}
+              </Text>
+            )}
           </View>
         </View>
       </View>
@@ -163,7 +179,9 @@ const MyPDFDocument = ({ text, file }: any) => (
               width: "50%",
             }}
           >
-            $3
+            {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1 +
+                      (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100 -
+                      text.amountPaidTxt}
           </Text>
         </View>
       </View>
@@ -200,7 +218,7 @@ const MyPDFDocument = ({ text, file }: any) => (
             width: "30%",
           }}
         >
-          {text?.rateTxt1}
+          {text?.currency}{" "} {text?.rateTxt1}
         </Text>
         <Text
           style={{
@@ -209,7 +227,7 @@ const MyPDFDocument = ({ text, file }: any) => (
             textAlign: "center",
           }}
         >
-          {text?.amountTxt1}
+          {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1}
         </Text>
       </View>
       <View style={styles.totalDiv}>
@@ -219,18 +237,31 @@ const MyPDFDocument = ({ text, file }: any) => (
             width: "35%",
           }}
         >
+          {/* {text?.subtotalTxt && */}
           <Text style={{ ...styles.textQues, textAlign: "right" }}>
-            {text?.date}
+            {text?.subtotal}
           </Text>
+          {/* } */}
+          {/* {text?.taxTxt && */}
           <Text style={{ ...styles.textQues, textAlign: "right" }}>
-            {text?.paymentTerms}
+            {text?.tax} {`(${text?.taxTxt} ${text?.taxType === 1 ? "%" : text?.currency})`}
           </Text>
+          {/* } */}
+          {text?.shippingTxt &&
           <Text style={{ ...styles.textQues, textAlign: "right" }}>
-            {text?.dueDate}
+            {text?.shipping}
           </Text>
+          }
+          {/* {text?.totalTxt && */}
           <Text style={{ ...styles.textQues, textAlign: "right" }}>
-            {text?.poNumber}
+            {text?.total}
           </Text>
+          {/* } */}
+          {text?.amountPaidTxt &&
+          <Text style={{ ...styles.textQues, textAlign: "right" }}>
+            {text?.amountPaid}
+          </Text>
+          }
         </View>
         <View
           style={{
@@ -238,28 +269,46 @@ const MyPDFDocument = ({ text, file }: any) => (
             width: "21%",
           }}
         >
+          {/* {text?.subtotalTxt && */}
           <Text style={{ ...styles.textAns, textAlign: "right" }}>
-            {text?.dateTxt}
+          {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1}
           </Text>
+          {/* } */}
+          {/* {text?.taxTxt && */}
           <Text style={{ ...styles.textAns, textAlign: "right" }}>
-            {text?.paymentTermsTxt}
+            {text?.currency}{" "} {text?.taxTxt}
           </Text>
+          {/* } */}
+          {text?.shippingTxt &&
           <Text style={{ ...styles.textAns, textAlign: "right" }}>
-            {text?.dueDateTxt}
+            {text?.currency}{" "} {text?.shippingTxt}
           </Text>
+          }
+          {/* {text?.totalTxt && */}
           <Text style={{ ...styles.textAns, textAlign: "right" }}>
-            {text?.poNumberTxt}
+          {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1 +
+                      (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100}
           </Text>
+          {/* } */}
+          {text?.amountPaidTxt &&
+          <Text style={{ ...styles.textAns, textAlign: "right" }}>
+            {text?.currency}{" "} {text?.amountPaidTxt}
+          </Text>
+          }
         </View>
       </View>
-      <View style={{ ...styles.notesDiv, marginTop: "40px" }}>
-        <Text style={styles.textQues}>{text?.notes}:</Text>
-        <Text style={styles.textAns}>{text?.notesTxt}</Text>
-      </View>
-      <View style={{ ...styles.notesDiv, marginTop: "10px" }}>
-        <Text style={styles.textQues}>{text?.terms}:</Text>
-        <Text style={styles.textAns}>{text?.termsTxt}</Text>
-      </View>
+      {text?.notesTxt && (
+        <View style={{ ...styles.notesDiv, marginTop: "40px" }}>
+          <Text style={styles.textQues}>{text?.notes}:</Text>
+          <Text style={styles.textAns}>{text?.notesTxt}</Text>
+        </View>
+      )}
+      {text?.termsTxt && (
+        <View style={{ ...styles.notesDiv, marginTop: "10px" }}>
+          <Text style={styles.textQues}>{text?.terms}:</Text>
+          <Text style={styles.textAns}>{text?.termsTxt}</Text>
+        </View>
+      )}
     </Page>
   </Document>
 );
@@ -324,7 +373,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-end",
-    gap: "10px",
+    gap: "7px",
   },
   balanceDueDiv: {
     backgroundColor: "#EBEBEB",
@@ -344,9 +393,12 @@ const styles = StyleSheet.create({
     paddingVertical: "4px",
     borderRadius: "4px",
     marginTop: "30px",
+    // width: "108%",
+    // marginLeft: "-20px"
   },
   itemsItemDiv: {
-    width: "100%",
+    // width: "108%",
+    // marginLeft: "-20px",
     paddingHorizontal: "10px",
     paddingVertical: "2px",
     marginTop: "5px",

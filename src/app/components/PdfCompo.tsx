@@ -14,6 +14,7 @@ const PdfCompo = () => {
 
   const [file, setFile] = useState<any>();
   const [text, setText] = useState<any>({
+    currency: "$",
     invoice: "INVOICE",
     page: 1,
     whoIsThisFrom: "",
@@ -45,13 +46,13 @@ const PdfCompo = () => {
     subtotalTxt: 0,
     discount: "Discount",
     discountTxt: 0,
-    discountType: "%",
+    discountType: 1,
     tax: "Tax",
     taxTxt: 0,
-    taxType: "%",
+    taxType: 1,
     shipping: "Shipping",
     shippingTxt: 0,
-    shippingType: "%",
+    shippingType: 1,
     total: "Total",
     totalTxt: 0,
     amountPaid: "Amount Paid",
@@ -60,6 +61,11 @@ const PdfCompo = () => {
     balanceDueTxt: 0,
   });
   const [visible, setVisible] = useState(true);
+  const [taxDiscountShipping, setTaxDiscountShipping] = useState({
+    tax: false,
+    discount: true,
+    shipping: true,
+  });
 
   const handleSelectFile = (e: any) => {
     setFile(URL.createObjectURL(e.target.files[0]));
@@ -69,11 +75,12 @@ const PdfCompo = () => {
     inputFile.current.click();
   };
 
-  const handleSelectDateClick = () => {
-    dateRef.current.showPicker();
-  };
+  // const handleSelectDateClick = () => {
+  //   dateRef.current.showPicker();
+  // };
 
   const handleSetText = (e: any) => {
+    console.log(e.target.name, e.target.value, "object")
     let name = e.target.name;
     let value = e.target.value;
     setText((prevText: any) => ({ ...prevText, [name]: value }));
@@ -115,6 +122,26 @@ const PdfCompo = () => {
     setVisible(!visible);
   };
 
+  const handleTxDiscountShipping = (id: number, show: boolean) => {
+    if(id===1){
+      setTaxDiscountShipping({...taxDiscountShipping, tax: show});
+    } else if (id===2){
+      setTaxDiscountShipping({...taxDiscountShipping, discount: show});
+    } else if(id===3){
+      setTaxDiscountShipping({...taxDiscountShipping, shipping: show});
+    }
+  }
+
+const handleTxDiscountShippingType = (id: number) => {
+  if(id===1){
+    setText((prevText: any) => ({ ...prevText, taxType: prevText.taxType === 1 ? 2 : 1, }));
+  } else if (id===2){
+    setText((prevText: any) => ({ ...prevText, discountType: prevText.discountType === 1 ? 2 : 1, }));
+  } else if(id===3){
+    setText((prevText: any) => ({ ...prevText, shippingType: prevText.shippingType === 1 ? 2 : 1, }));
+  }
+}
+
   return (
     <>
       <div
@@ -124,8 +151,6 @@ const PdfCompo = () => {
       >
         <div
           className="bg-white h-full lg:w-5/6 w-full rounded-xl p-5"
-          // ref={printRef}
-          // ref={elementRef}
         >
           <div className="flex justify-between lg:flex-row flex-col">
             <input
@@ -141,7 +166,6 @@ const PdfCompo = () => {
             >
               {file ? (
                 <img
-                  // src={URL.createObjectURL(file)}
                   src={file}
                   alt="logo"
                   className="object-cover w-[12vw] h-[7vw] min-w-[180px] min-h-[100px] rounded-md"
@@ -240,10 +264,11 @@ const PdfCompo = () => {
                   <input
                     name="dateTxt"
                     type="text"
+                    // type="date"
                     value={text.dateTxt}
                     onChange={handleSetText}
-                    onClick={handleSelectDateClick}
-                    className="inputNonHoverShow text-end cursor-pointer"
+                    // onClick={handleSelectDateClick}
+                    className="inputNonHoverShow text-end"
                   />
                   {/* <input type="date" hidden ref={dateRef} /> */}
                 </div>
@@ -319,7 +344,7 @@ const PdfCompo = () => {
                 type="text"
                 value={text.quantity}
                 onChange={handleSetText}
-                className="inputHoverShowWhite w-2/5 text-center"
+                className="inputHoverShowWhite w-4/5 text-center"
                 style={{ padding: "0px" }}
               />
               <input
@@ -348,16 +373,16 @@ const PdfCompo = () => {
               onChange={handleSetText}
               className="inputNonHoverShowNoWidth w-full lg:order-1 order-3"
             />
-            <div className="flex w-3/12 gap-1 lg:order-2 order-2">
+            <div className="flex sm:w-3/12 w-2/3 gap-1 lg:order-2 order-2">
               <input
                 name="quantityTxt1"
                 type="number"
                 value={text.quantityTxt1}
                 onChange={handleSetText}
-                className="inputNonHoverShowNoWidth w-1/3"
+                className="inputNonHoverShowNoWidth sm:1/3 w-2/5"
               />
-              <div className="w-2/3 flex items-center gap-1 pl-4 border-[1px] border-[#d5dbe2] rounded-md">
-                <span className="text-gray-500 text-sm">$</span>
+              <div className="sm:w-2/3 w-3/5 flex items-center gap-1 pl-4 border-[1px] border-[#d5dbe2] rounded-md">
+                <span className="text-gray-500 text-sm">{text?.currency}</span>
                 <input
                   name="rateTxt1"
                   type="number"
@@ -367,8 +392,8 @@ const PdfCompo = () => {
                 />
               </div>
             </div>
-            <span className="w-2/12 flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1">
-              <span className="lg:hidden inline mr-1">Amount:</span>$
+            <span className="sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1">
+              <span className="lg:hidden inline mr-1">Amount:</span>{text?.currency}{" "}
               {/* {text.amountTxt1} */}
               {text.quantityTxt1 * text.rateTxt1}
             </span>
@@ -423,10 +448,10 @@ const PdfCompo = () => {
                     className="inputHoverShow text-end  "
                   />
                   <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                    {/* $ {text.subtotalTxt} */}$
-                    {text.quantityTxt1 * text.rateTxt1}
+                  {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1}
                   </span>
                 </div>
+                {!taxDiscountShipping.tax &&
                 <div className="flex gap-1">
                   <input
                     name="tax"
@@ -435,7 +460,7 @@ const PdfCompo = () => {
                     onChange={handleSetText}
                     className="inputHoverShow text-end"
                   />
-                  <div className="w-2/4 flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                  <div className="sm:w-2/4 w-full flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
                     <input
                       name="taxTxt"
                       type="number"
@@ -444,29 +469,113 @@ const PdfCompo = () => {
                       className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
                     />
                     <span className="text-gray-500 text-sm mr-2">
-                      {text.taxType}
+                      {text.taxType === 1 ? "%" : text?.currency}
                     </span>
-                    <button className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md">
+                    <button className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
+                    onClick={()=>handleTxDiscountShippingType(1)}
+                    >
                       <HiOutlineRefresh />
                     </button>
                   </div>
-                  <button className="px-4 py-2 rounded-md text-white hover:text-[#16a085] duration-300">
+                  <button className="sm:px-4 px-1 py-2 rounded-md sm:text-white text-[#16a085] hover:text-[#16a085] duration-300"
+                  onClick={()=>handleTxDiscountShipping(1, true)}
+                  >
                     <IoMdClose />
                   </button>
                 </div>
-                <div className="flex justify-end mr-10 mt-2">
-                  <button className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-4 py-2 font-semibold">
-                    <IoMdAdd />
-                    Tax
+                }
+                {!taxDiscountShipping.discount &&
+                <div className="flex gap-1">
+                  <input
+                    name="discount"
+                    type="text"
+                    value={text.discount}
+                    onChange={handleSetText}
+                    className="inputHoverShow text-end"
+                  />
+                  <div className="sm:w-2/4 w-full flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                    <input
+                      name="discountTxt"
+                      type="number"
+                      value={text.discountTxt}
+                      onChange={handleSetText}
+                      className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
+                    />
+                    <span className="text-gray-500 text-sm mr-2">
+                      {text.discountType === 1 ? "%" : text?.currency}
+                    </span>
+                    <button className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
+                    onClick={()=>handleTxDiscountShippingType(2)}
+                    >
+                      <HiOutlineRefresh />
+                    </button>
+                  </div>
+                  <button className="sm:px-4 px-1 py-2 rounded-md sm:text-white text-[#16a085] hover:text-[#16a085] duration-300"
+                  onClick={()=>handleTxDiscountShipping(2, true)}
+                  >
+                    <IoMdClose />
                   </button>
-                  <button className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-4 py-2 font-semibold">
-                    <IoMdAdd />
-                    Discount
+                </div>
+}
+                {!taxDiscountShipping.shipping && 
+                <div className="flex gap-1">
+                  <input
+                    name="shipping"
+                    type="text"
+                    value={text.shipping}
+                    onChange={handleSetText}
+                    className="inputHoverShow text-end"
+                  />
+                  <div className="sm:w-2/4 w-full flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                    <input
+                      name="shippingTxt"
+                      type="number"
+                      value={text.shippingTxt}
+                      onChange={handleSetText}
+                      className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
+                    />
+                    <span className="text-gray-500 text-sm mr-2">
+                      {text.shippingType === 1 ? "%" : text?.currency}
+                    </span>
+                    <button className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
+                    onClick={()=>handleTxDiscountShippingType(3)}
+                    >
+                      <HiOutlineRefresh />
+                    </button>
+                  </div>
+                  <button className="sm:px-4 px-1 py-2 rounded-md sm:text-white text-[#16a085] hover:text-[#16a085] duration-300"
+                  onClick={()=>handleTxDiscountShipping(3, true)}
+                  >
+                    <IoMdClose />
                   </button>
-                  <button className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-4 py-2 font-semibold">
-                    <IoMdAdd />
-                    Shipping
-                  </button>
+                </div>
+}
+
+                <div className="flex justify-end sm:mr-10 mr-2 mt-2 gap-5">
+                  {taxDiscountShipping.tax && (
+                    <button className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-1 py-2 font-semibold"
+                    onClick={()=>handleTxDiscountShipping(1, false)}
+                    >
+                      <IoMdAdd />
+                      Tax
+                    </button>
+                  )}
+                  {taxDiscountShipping.discount && (
+                    <button className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-1 py-2 font-semibold"
+                    onClick={()=>handleTxDiscountShipping(2, false)}
+                    >
+                      <IoMdAdd />
+                      Discount
+                    </button>
+                  )}
+                  {taxDiscountShipping.shipping && (
+                    <button className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-1 py-2 font-semibold"
+                    onClick={()=>handleTxDiscountShipping(3, false)}
+                    >
+                      <IoMdAdd />
+                      Shipping
+                    </button>
+                  )}
                 </div>
                 <div className="flex gap-1 items-center">
                   <input
@@ -477,12 +586,12 @@ const PdfCompo = () => {
                     className="inputHoverShow text-end"
                   />
                   <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                    {/* $ {text.totalTxt} */}${" "}
+                    {/* $ {text.totalTxt} */}{text?.currency}{" "}
                     {text.quantityTxt1 * text.rateTxt1 +
                       (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100}
                   </span>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1 sm:mr-12 mr-8">
                   <input
                     name="amountPaid"
                     type="text"
@@ -490,8 +599,8 @@ const PdfCompo = () => {
                     onChange={handleSetText}
                     className="inputHoverShow text-end"
                   />
-                  <div className="w-2/4 flex items-center gap-1 pl-2 mr-12 mt-2 border-[1px] border-[#d5dbe2] rounded-md">
-                    <span className="text-gray-500 text-sm mr-2">$</span>
+                  <div className="w-2/4 flex items-center gap-1 pl-2 mt-2 border-[1px] border-[#d5dbe2] rounded-md">
+                    <span className="text-gray-500 text-sm mr-2">{text?.currency}{" "}</span>
                     <input
                       name="amountPaidTxt"
                       type="number"
@@ -510,7 +619,7 @@ const PdfCompo = () => {
                     className="inputHoverShow text-end  "
                   />
                   <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                    {/* $ {text.balanceDueTxt} */}${" "}
+                    {/* $ {text.balanceDueTxt} */}{text?.currency}{" "}
                     {text.quantityTxt1 * text.rateTxt1 +
                       (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100 -
                       text.amountPaidTxt}
@@ -523,7 +632,7 @@ const PdfCompo = () => {
 
         <div className="lg:w-1/6 w-full mt-5 flex flex-col gap-6">
           <button
-            className="bg-[#1abc9c] hover:bg-[#16a085] p-2 rounded-lg flex items-center justify-center gap-2 text-white lg:w-full w-1/3 duration-300"
+            className="bg-[#1abc9c] hover:bg-[#16a085] p-2 rounded-lg flex items-center justify-center gap-2 text-white w-full duration-300"
             // onClick={handleDownloadPdf}
             onClick={toggleVisible}
           >
@@ -535,9 +644,11 @@ const PdfCompo = () => {
             <p>Currency</p>
             <select
               className="p-2 rounded-lg outline-none bg-white border-[1px] border-[#d5dbe2] mt-2 lg:w-full w-1/3"
-              defaultValue={"USD"}
+              defaultValue={"$"}
+              name="currency"
+              onChange={handleSetText}
             >
-              <option value="AED">AED</option>
+              {/* <option value="AED">AED</option>
               <option value="AFN">AFN</option>
               <option value="ALL">ALL</option>
               <option value="AMD">AMD</option>
@@ -601,9 +712,9 @@ const PdfCompo = () => {
               <option value="HTG">HTG</option>
               <option value="HUF">HUF</option>
               <option value="IDR">IDR</option>
-              <option value="ILS">ILS</option>
-              <option value="INR">INR</option>
-              <option value="IQD">IQD</option>
+              <option value="ILS">ILS</option> */}
+              <option value="₹">INR</option>
+              {/* <option value="IQD">IQD</option>
               <option value="IRR">IRR</option>
               <option value="ISK">ISK</option>
               <option value="JMD">JMD</option>
@@ -683,9 +794,9 @@ const PdfCompo = () => {
               <option value="TWD">TWD</option>
               <option value="TZS">TZS</option>
               <option value="UAH">UAH</option>
-              <option value="UGX">UGX</option>
-              <option value="USD">USD</option>
-              <option value="USN">USN</option>
+              <option value="UGX">UGX</option> */}
+              <option value="$">USD</option>
+              {/* <option value="USN">USN</option>
               <option value="UYI">UYI</option>
               <option value="UYU">UYU</option>
               <option value="UYW">UYW</option>
@@ -715,7 +826,7 @@ const PdfCompo = () => {
               <option value="YER">YER</option>
               <option value="ZAR">ZAR</option>
               <option value="ZMW">ZMW</option>
-              <option value="ZWL">ZWL</option>
+              <option value="ZWL">ZWL</option> */}
             </select>
           </div>
         </div>
@@ -724,7 +835,7 @@ const PdfCompo = () => {
       <div
         className={`${
           visible ? "hidden" : "visible"
-        } w-full h-full p-5 pt-1 mt-1 rounded-xl`}
+        } w-full h-full p-5 pt-1 pb-2 mt-1 rounded-xl`}
       >
         <button onClick={toggleVisible}>
           <AiTwotoneCloseCircle size={40} />
