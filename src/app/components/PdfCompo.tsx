@@ -34,10 +34,10 @@ const PdfCompo = () => {
     quantity: "Quantity",
     rate: "Rate",
     amount: "Amount",
-    itemTxt1: "",
-    quantityTxt1: 1,
-    rateTxt1: 0,
-    amountTxt1: 0,
+    itemTxt1: [""],
+    quantityTxt1: [1],
+    rateTxt1: [0],
+    amountTxt1: [0],
     notes: "Notes",
     notesTxt: "",
     terms: "Terms",
@@ -80,10 +80,71 @@ const PdfCompo = () => {
   // };
 
   const handleSetText = (e: any) => {
-    console.log(e.target.name, e.target.value, "object")
+    console.log(e.target.name, e.target.value, "object");
     let name = e.target.name;
     let value = e.target.value;
     setText((prevText: any) => ({ ...prevText, [name]: value }));
+  };
+
+  const handleSetTextArray = (e: any, index: any) => {
+    const { name, value } = e.target;
+
+    setText((prevText: any) => {
+      const updatedItemTxt1 = [...prevText.itemTxt1];
+      const updatedQuantityTxt1 = [...prevText.quantityTxt1];
+      const updatedRateTxt1 = [...prevText.rateTxt1];
+
+      if (name === "itemTxt1") {
+        updatedItemTxt1[index] = value;
+      } else if (name === "quantityTxt1") {
+        updatedQuantityTxt1[index] = parseFloat(value) || 0;
+      } else if (name === "rateTxt1") {
+        updatedRateTxt1[index] = parseFloat(value) || 0;
+      }
+
+      return {
+        ...prevText,
+        itemTxt1: updatedItemTxt1,
+        quantityTxt1: updatedQuantityTxt1,
+        rateTxt1: updatedRateTxt1,
+        amountTxt1: updatedQuantityTxt1.map(
+          (qty, i) => qty * updatedRateTxt1[i]
+        ),
+      };
+    });
+  };
+
+  const handleDeleteTextArray = (index: number) => {
+    setText((prevText: any) => {
+      const updatedItemTxt1 = prevText.itemTxt1.filter(
+        (_: any, i: any) => i !== index
+      );
+      const updatedQuantityTxt1 = prevText.quantityTxt1.filter(
+        (_: any, i: any) => i !== index
+      );
+      const updatedRateTxt1 = prevText.rateTxt1.filter(
+        (_: any, i: any) => i !== index
+      );
+
+      return {
+        ...prevText,
+        itemTxt1: updatedItemTxt1,
+        quantityTxt1: updatedQuantityTxt1,
+        rateTxt1: updatedRateTxt1,
+        amountTxt1: updatedQuantityTxt1.map(
+          (qty: any, i: any) => qty * updatedRateTxt1[i]
+        ),
+      };
+    });
+  };
+
+  const handleAddTextArray = () => {
+    setText((prevText: any) => ({
+      ...prevText,
+      itemTxt1: [...prevText.itemTxt1, ""],
+      quantityTxt1: [...prevText.quantityTxt1, 1],
+      rateTxt1: [...prevText.rateTxt1, 0],
+    }));
   };
 
   // const handleDownloadPdf = async () => {
@@ -123,25 +184,41 @@ const PdfCompo = () => {
   };
 
   const handleTxDiscountShipping = (id: number, show: boolean) => {
-    if(id===1){
-      setTaxDiscountShipping({...taxDiscountShipping, tax: show});
-    } else if (id===2){
-      setTaxDiscountShipping({...taxDiscountShipping, discount: show});
-    } else if(id===3){
-      setTaxDiscountShipping({...taxDiscountShipping, shipping: show});
+    if (id === 1) {
+      setTaxDiscountShipping({ ...taxDiscountShipping, tax: show });
+    } else if (id === 2) {
+      setTaxDiscountShipping({ ...taxDiscountShipping, discount: show });
+    } else if (id === 3) {
+      setTaxDiscountShipping({ ...taxDiscountShipping, shipping: show });
     }
-  }
+  };
 
-const handleTxDiscountShippingType = (id: number) => {
-  if(id===1){
-    setText((prevText: any) => ({ ...prevText, taxType: prevText.taxType === 1 ? 2 : 1, }));
-  } else if (id===2){
-    setText((prevText: any) => ({ ...prevText, discountType: prevText.discountType === 1 ? 2 : 1, }));
-  } else if(id===3){
-    setText((prevText: any) => ({ ...prevText, shippingType: prevText.shippingType === 1 ? 2 : 1, }));
-  }
-}
+  const handleTxDiscountShippingType = (id: number) => {
+    if (id === 1) {
+      setText((prevText: any) => ({
+        ...prevText,
+        taxType: prevText.taxType === 1 ? 2 : 1,
+      }));
+    } else if (id === 2) {
+      setText((prevText: any) => ({
+        ...prevText,
+        discountType: prevText.discountType === 1 ? 2 : 1,
+      }));
+    } else if (id === 3) {
+      setText((prevText: any) => ({
+        ...prevText,
+        shippingType: prevText.shippingType === 1 ? 2 : 1,
+      }));
+    }
+  };
 
+  const subtotal = text.itemTxt1.reduce((acc: any, item: any, index: any) => {
+    return acc + (text.quantityTxt1[index] * text.rateTxt1[index]);
+  }, 0);
+
+  const total = subtotal + (subtotal * text.taxTxt) / 100;
+  const balanceDue = total - text.amountPaidTxt;
+  
   return (
     <>
       <div
@@ -149,9 +226,7 @@ const handleTxDiscountShippingType = (id: number) => {
           visible ? "visible" : "hidden"
         }`}
       >
-        <div
-          className="bg-white h-full lg:w-5/6 w-full rounded-xl p-5"
-        >
+        <div className="bg-white h-full lg:w-5/6 w-full rounded-xl p-5">
           <div className="flex justify-between lg:flex-row flex-col">
             <input
               type="file"
@@ -330,7 +405,7 @@ const handleTxDiscountShippingType = (id: number) => {
             </div>
           </div>
 
-          <div className="lg:flex hidden mt-8 bg-[#192a56] text-white rounded-lg">
+          <div className="lg:flex hidden mt-8 bg-[#192a56] text-white rounded-lg pr-8">
             <input
               name="item"
               type="text"
@@ -364,43 +439,69 @@ const handleTxDiscountShippingType = (id: number) => {
             />
           </div>
 
-          <div className="lg:flex grid gap-1 border lg:border-transparent border-[#d5dbe2]/50 lg:p-0 p-4 rounded-lg lg:mt-1.5 mt-10">
-            <input
-              name="itemTxt1"
-              type="text"
-              placeholder={"Description of item/service"}
-              value={text.itemTxt1}
-              onChange={handleSetText}
-              className="inputNonHoverShowNoWidth w-full lg:order-1 order-3"
-            />
-            <div className="flex sm:w-3/12 w-2/3 gap-1 lg:order-2 order-2">
+          {text?.itemTxt1.map((item: any, index: number) => (
+            <div
+              className="lg:flex grid gap-1 border lg:border-transparent border-[#d5dbe2]/50 lg:p-0 p-4 rounded-lg lg:mt-1.5 mt-10"
+              key={index}
+            >
               <input
-                name="quantityTxt1"
-                type="number"
-                value={text.quantityTxt1}
-                onChange={handleSetText}
-                className="inputNonHoverShowNoWidth sm:1/3 w-2/5"
+                name="itemTxt1"
+                type="text"
+                placeholder="Description of item/service"
+                value={text.itemTxt1[index]}
+                onChange={(e) => handleSetTextArray(e, index)}
+                className="inputNonHoverShowNoWidth w-full lg:order-1 order-3"
               />
-              <div className="sm:w-2/3 w-3/5 flex items-center gap-1 pl-4 border-[1px] border-[#d5dbe2] rounded-md">
-                <span className="text-gray-500 text-sm">{text?.currency}</span>
+
+              <div className="flex sm:w-6/12 lg:w-3/12 w-10/12 gap-1 lg:order-2 order-2">
                 <input
-                  name="rateTxt1"
+                  name="quantityTxt1"
                   type="number"
-                  value={text.rateTxt1}
-                  onChange={handleSetText}
-                  className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg"
+                  value={text.quantityTxt1[index]}
+                  onChange={(e) => handleSetTextArray(e, index)}
+                  className="inputNonHoverShowNoWidth sm:w-1/3 w-2/5 !px-2"
                 />
+
+                <div className="sm:w-2/3 w-3/5 flex items-center gap-1 pl-4 border border-[#d5dbe2] rounded-md">
+                  <span className="text-gray-500 text-sm">
+                    {text?.currency}
+                  </span>
+                  <input
+                    name="rateTxt1"
+                    type="number"
+                    value={text.rateTxt1[index]}
+                    onChange={(e) => handleSetTextArray(e, index)}
+                    className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg"
+                  />
+                </div>
               </div>
+
+              <span
+                className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${
+                  index === 0 ? "mr-9" : "mr-0"
+                }`}
+              >
+                <span className="lg:hidden inline mr-1">Amount:</span>
+                {text.currency}{" "}
+                {text.quantityTxt1[index] * text.rateTxt1[index]}
+              </span>
+
+              {index !== 0 && (
+                <button
+                  className="px-2 py-2 flex items-center justify-center rounded-md text-[#16a085] order-4 duration-300"
+                  onClick={() => handleDeleteTextArray(index)}
+                >
+                  <IoMdClose />
+                </button>
+              )}
             </div>
-            <span className="sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1">
-              <span className="lg:hidden inline mr-1">Amount:</span>{text?.currency}{" "}
-              {/* {text.amountTxt1} */}
-              {text.quantityTxt1 * text.rateTxt1}
-            </span>
-          </div>
+          ))}
 
           <div className="mt-2">
-            <button className="text-[#16a085] text-sm flex items-center gap-2 px-4 py-2 border border-[#16a085] rounded-md hover:bg-[#16a085] hover:text-white duration-300">
+            <button
+              className="text-[#16a085] text-sm flex items-center gap-2 px-4 py-2 border border-[#16a085] rounded-md hover:bg-[#16a085] hover:text-white duration-300"
+              onClick={handleAddTextArray}
+            >
               <IoMdAdd size={16} />
               Line item
             </button>
@@ -448,129 +549,139 @@ const handleTxDiscountShippingType = (id: number) => {
                     className="inputHoverShow text-end  "
                   />
                   <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                  {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1}
+                    {/* {text?.currency} {text.quantityTxt1 * text.rateTxt1} */}
+                    {text?.currency} {subtotal}
                   </span>
                 </div>
-                {!taxDiscountShipping.tax &&
-                <div className="flex gap-1">
-                  <input
-                    name="tax"
-                    type="text"
-                    value={text.tax}
-                    onChange={handleSetText}
-                    className="inputHoverShow text-end"
-                  />
-                  <div className="sm:w-2/4 w-full flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                {!taxDiscountShipping.tax && (
+                  <div className="flex gap-1">
                     <input
-                      name="taxTxt"
-                      type="number"
-                      value={text.taxTxt}
+                      name="tax"
+                      type="text"
+                      value={text.tax}
                       onChange={handleSetText}
-                      className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
+                      className="inputHoverShow text-end"
                     />
-                    <span className="text-gray-500 text-sm mr-2">
-                      {text.taxType === 1 ? "%" : text?.currency}
-                    </span>
-                    <button className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
-                    onClick={()=>handleTxDiscountShippingType(1)}
+                    <div className="sm:w-2/4 w-full flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                      <input
+                        name="taxTxt"
+                        type="number"
+                        value={text.taxTxt}
+                        onChange={handleSetText}
+                        className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
+                      />
+                      <span className="text-gray-500 text-sm mr-2">
+                        {text.taxType === 1 ? "%" : text?.currency}
+                      </span>
+                      <button
+                        className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
+                        onClick={() => handleTxDiscountShippingType(1)}
+                      >
+                        <HiOutlineRefresh />
+                      </button>
+                    </div>
+                    <button
+                      className="sm:px-4 px-1 py-2 rounded-md sm:text-white text-[#16a085] hover:text-[#16a085] duration-300"
+                      onClick={() => handleTxDiscountShipping(1, true)}
                     >
-                      <HiOutlineRefresh />
+                      <IoMdClose />
                     </button>
                   </div>
-                  <button className="sm:px-4 px-1 py-2 rounded-md sm:text-white text-[#16a085] hover:text-[#16a085] duration-300"
-                  onClick={()=>handleTxDiscountShipping(1, true)}
-                  >
-                    <IoMdClose />
-                  </button>
-                </div>
-                }
-                {!taxDiscountShipping.discount &&
-                <div className="flex gap-1">
-                  <input
-                    name="discount"
-                    type="text"
-                    value={text.discount}
-                    onChange={handleSetText}
-                    className="inputHoverShow text-end"
-                  />
-                  <div className="sm:w-2/4 w-full flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                )}
+                {!taxDiscountShipping.discount && (
+                  <div className="flex gap-1">
                     <input
-                      name="discountTxt"
-                      type="number"
-                      value={text.discountTxt}
+                      name="discount"
+                      type="text"
+                      value={text.discount}
                       onChange={handleSetText}
-                      className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
+                      className="inputHoverShow text-end"
                     />
-                    <span className="text-gray-500 text-sm mr-2">
-                      {text.discountType === 1 ? "%" : text?.currency}
-                    </span>
-                    <button className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
-                    onClick={()=>handleTxDiscountShippingType(2)}
+                    <div className="sm:w-2/4 w-full flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                      <input
+                        name="discountTxt"
+                        type="number"
+                        value={text.discountTxt}
+                        onChange={handleSetText}
+                        className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
+                      />
+                      <span className="text-gray-500 text-sm mr-2">
+                        {text.discountType === 1 ? "%" : text?.currency}
+                      </span>
+                      <button
+                        className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
+                        onClick={() => handleTxDiscountShippingType(2)}
+                      >
+                        <HiOutlineRefresh />
+                      </button>
+                    </div>
+                    <button
+                      className="sm:px-4 px-1 py-2 rounded-md sm:text-white text-[#16a085] hover:text-[#16a085] duration-300"
+                      onClick={() => handleTxDiscountShipping(2, true)}
                     >
-                      <HiOutlineRefresh />
+                      <IoMdClose />
                     </button>
                   </div>
-                  <button className="sm:px-4 px-1 py-2 rounded-md sm:text-white text-[#16a085] hover:text-[#16a085] duration-300"
-                  onClick={()=>handleTxDiscountShipping(2, true)}
-                  >
-                    <IoMdClose />
-                  </button>
-                </div>
-}
-                {!taxDiscountShipping.shipping && 
-                <div className="flex gap-1">
-                  <input
-                    name="shipping"
-                    type="text"
-                    value={text.shipping}
-                    onChange={handleSetText}
-                    className="inputHoverShow text-end"
-                  />
-                  <div className="sm:w-2/4 w-full flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                )}
+                {!taxDiscountShipping.shipping && (
+                  <div className="flex gap-1">
                     <input
-                      name="shippingTxt"
-                      type="number"
-                      value={text.shippingTxt}
+                      name="shipping"
+                      type="text"
+                      value={text.shipping}
                       onChange={handleSetText}
-                      className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
+                      className="inputHoverShow text-end"
                     />
-                    <span className="text-gray-500 text-sm mr-2">
-                      {text.shippingType === 1 ? "%" : text?.currency}
-                    </span>
-                    <button className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
-                    onClick={()=>handleTxDiscountShippingType(3)}
+                    <div className="sm:w-2/4 w-full flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                      <input
+                        name="shippingTxt"
+                        type="number"
+                        value={text.shippingTxt}
+                        onChange={handleSetText}
+                        className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
+                      />
+                      <span className="text-gray-500 text-sm mr-2">
+                        {text.shippingType === 1 ? "%" : text?.currency}
+                      </span>
+                      <button
+                        className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
+                        onClick={() => handleTxDiscountShippingType(3)}
+                      >
+                        <HiOutlineRefresh />
+                      </button>
+                    </div>
+                    <button
+                      className="sm:px-4 px-1 py-2 rounded-md sm:text-white text-[#16a085] hover:text-[#16a085] duration-300"
+                      onClick={() => handleTxDiscountShipping(3, true)}
                     >
-                      <HiOutlineRefresh />
+                      <IoMdClose />
                     </button>
                   </div>
-                  <button className="sm:px-4 px-1 py-2 rounded-md sm:text-white text-[#16a085] hover:text-[#16a085] duration-300"
-                  onClick={()=>handleTxDiscountShipping(3, true)}
-                  >
-                    <IoMdClose />
-                  </button>
-                </div>
-}
+                )}
 
                 <div className="flex justify-end sm:mr-10 mr-2 mt-2 gap-5">
                   {taxDiscountShipping.tax && (
-                    <button className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-1 py-2 font-semibold"
-                    onClick={()=>handleTxDiscountShipping(1, false)}
+                    <button
+                      className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-1 py-2 font-semibold"
+                      onClick={() => handleTxDiscountShipping(1, false)}
                     >
                       <IoMdAdd />
                       Tax
                     </button>
                   )}
                   {taxDiscountShipping.discount && (
-                    <button className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-1 py-2 font-semibold"
-                    onClick={()=>handleTxDiscountShipping(2, false)}
+                    <button
+                      className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-1 py-2 font-semibold"
+                      onClick={() => handleTxDiscountShipping(2, false)}
                     >
                       <IoMdAdd />
                       Discount
                     </button>
                   )}
                   {taxDiscountShipping.shipping && (
-                    <button className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-1 py-2 font-semibold"
-                    onClick={()=>handleTxDiscountShipping(3, false)}
+                    <button
+                      className="flex gap-1 items-center text-[#16a085] hover:text-[#0f7b65] text-sm px-1 py-2 font-semibold"
+                      onClick={() => handleTxDiscountShipping(3, false)}
                     >
                       <IoMdAdd />
                       Shipping
@@ -586,9 +697,11 @@ const handleTxDiscountShippingType = (id: number) => {
                     className="inputHoverShow text-end"
                   />
                   <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                    {/* $ {text.totalTxt} */}{text?.currency}{" "}
-                    {text.quantityTxt1 * text.rateTxt1 +
-                      (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100}
+                    {/* $ {text.totalTxt} */}
+                    {text?.currency}{" "}
+                    {/* {text.quantityTxt1 * text.rateTxt1 +
+                      (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100} */}
+                    {total}
                   </span>
                 </div>
                 <div className="flex gap-1 sm:mr-12 mr-8">
@@ -600,7 +713,9 @@ const handleTxDiscountShippingType = (id: number) => {
                     className="inputHoverShow text-end"
                   />
                   <div className="w-2/4 flex items-center gap-1 pl-2 mt-2 border-[1px] border-[#d5dbe2] rounded-md">
-                    <span className="text-gray-500 text-sm mr-2">{text?.currency}{" "}</span>
+                    <span className="text-gray-500 text-sm mr-2">
+                      {text?.currency}{" "}
+                    </span>
                     <input
                       name="amountPaidTxt"
                       type="number"
@@ -619,10 +734,12 @@ const handleTxDiscountShippingType = (id: number) => {
                     className="inputHoverShow text-end  "
                   />
                   <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                    {/* $ {text.balanceDueTxt} */}{text?.currency}{" "}
-                    {text.quantityTxt1 * text.rateTxt1 +
+                    {/* $ {text.balanceDueTxt} */}
+                    {text?.currency}{" "}
+                    {/* {text.quantityTxt1 * text.rateTxt1 +
                       (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100 -
-                      text.amountPaidTxt}
+                      text.amountPaidTxt} */}
+                      {balanceDue}
                   </span>
                 </div>
               </div>
