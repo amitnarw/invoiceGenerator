@@ -179,9 +179,11 @@ const MyPDFDocument = ({ text, file }: any) => (
               width: "50%",
             }}
           >
-            {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1 +
-                      (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100 -
-                      text.amountPaidTxt}
+            {text?.currency}{" "}
+            {/* {text.quantityTxt1 * text.rateTxt1 +
+              (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100 -
+              text.amountPaidTxt} */}
+            {text?.balanceDueTxt}
           </Text>
         </View>
       </View>
@@ -218,7 +220,7 @@ const MyPDFDocument = ({ text, file }: any) => (
             width: "30%",
           }}
         >
-          {text?.currency}{" "} {text?.rateTxt1}
+          {text?.currency} {text?.rateTxt1}
         </Text>
         <Text
           style={{
@@ -227,7 +229,7 @@ const MyPDFDocument = ({ text, file }: any) => (
             textAlign: "center",
           }}
         >
-          {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1}
+          {text?.currency} {text.quantityTxt1 * text.rateTxt1}
         </Text>
       </View>
       <View style={styles.totalDiv}>
@@ -237,31 +239,39 @@ const MyPDFDocument = ({ text, file }: any) => (
             width: "35%",
           }}
         >
-          {/* {text?.subtotalTxt && */}
           <Text style={{ ...styles.textQues, textAlign: "right" }}>
             {text?.subtotal}
           </Text>
-          {/* } */}
-          {/* {text?.taxTxt && */}
+
+          {text?.discountTxt && (
+            <Text style={{ ...styles.textQues, textAlign: "right" }}>
+              {text?.discount}
+              {`(${text?.totalDiscount} ${
+                text?.discountType === 1 ? "%" : text?.currency
+              })`}
+            </Text>
+          )}
+
           <Text style={{ ...styles.textQues, textAlign: "right" }}>
-            {text?.tax} {`(${text?.taxTxt} ${text?.taxType === 1 ? "%" : text?.currency})`}
+            {text?.tax}{" "}
+            {`(${text?.taxTxt} ${text?.taxType === 1 ? "%" : text?.currency})`}
           </Text>
-          {/* } */}
-          {text?.shippingTxt &&
-          <Text style={{ ...styles.textQues, textAlign: "right" }}>
-            {text?.shipping}
-          </Text>
-          }
-          {/* {text?.totalTxt && */}
+
+          {text?.shippingTxt && (
+            <Text style={{ ...styles.textQues, textAlign: "right" }}>
+              {text?.shipping}
+            </Text>
+          )}
+
           <Text style={{ ...styles.textQues, textAlign: "right" }}>
             {text?.total}
           </Text>
-          {/* } */}
-          {text?.amountPaidTxt &&
-          <Text style={{ ...styles.textQues, textAlign: "right" }}>
-            {text?.amountPaid}
-          </Text>
-          }
+
+          {text?.amountPaidTxt && (
+            <Text style={{ ...styles.textQues, textAlign: "right" }}>
+              {text?.amountPaid}
+            </Text>
+          )}
         </View>
         <View
           style={{
@@ -269,32 +279,40 @@ const MyPDFDocument = ({ text, file }: any) => (
             width: "21%",
           }}
         >
-          {/* {text?.subtotalTxt && */}
           <Text style={{ ...styles.textAns, textAlign: "right" }}>
-          {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1}
+            {/* {text?.currency} {text.quantityTxt1 * text.rateTxt1} */}
+            {text?.currency} {text?.subTotalTxt}
           </Text>
-          {/* } */}
-          {/* {text?.taxTxt && */}
-          <Text style={{ ...styles.textAns, textAlign: "right" }}>
-            {text?.currency}{" "} {text?.taxTxt}
+
+          {text?.discountTxt && (
+            <Text style={{ ...styles.textQues, textAlign: "right" }}>
+              {text?.currency} {text?.totalDiscount}
+            </Text>
+          )}
+
+          <Text style={{ ...styles.textQues, textAlign: "right" }}>
+            {/* {text?.currency} {text?.taxTxt} */}
+            {text?.currency} {text?.totalTax}
           </Text>
-          {/* } */}
-          {text?.shippingTxt &&
-          <Text style={{ ...styles.textAns, textAlign: "right" }}>
-            {text?.currency}{" "} {text?.shippingTxt}
-          </Text>
-          }
+
+          {text?.shippingTxt && (
+            <Text style={{ ...styles.textAns, textAlign: "right" }}>
+              {text?.currency} {text?.shippingTxt}
+            </Text>
+          )}
           {/* {text?.totalTxt && */}
           <Text style={{ ...styles.textAns, textAlign: "right" }}>
-          {text?.currency}{" "} {text.quantityTxt1 * text.rateTxt1 +
-                      (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100}
+            {text?.currency}{" "}
+            {/* {text.quantityTxt1 * text.rateTxt1 +
+              (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100} */}
+            {text?.totalTxt}
           </Text>
           {/* } */}
-          {text?.amountPaidTxt &&
-          <Text style={{ ...styles.textAns, textAlign: "right" }}>
-            {text?.currency}{" "} {text?.amountPaidTxt}
-          </Text>
-          }
+          {text?.amountPaidTxt && (
+            <Text style={{ ...styles.textAns, textAlign: "right" }}>
+              {text?.currency} {text?.amountPaidTxt}
+            </Text>
+          )}
         </View>
       </View>
       {text?.notesTxt && (

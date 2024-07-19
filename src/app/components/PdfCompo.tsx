@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { FiDownload } from "react-icons/fi";
 import { HiOutlineRefresh } from "react-icons/hi";
@@ -80,7 +80,6 @@ const PdfCompo = () => {
   // };
 
   const handleSetText = (e: any) => {
-    console.log(e.target.name, e.target.value, "object");
     let name = e.target.name;
     let value = e.target.value;
     setText((prevText: any) => ({ ...prevText, [name]: value }));
@@ -231,6 +230,23 @@ const PdfCompo = () => {
   ).toFixed(2);
   const total = Number(totalRaw);
   const balanceDue = total - text?.amountPaidTxt;
+
+  useEffect(() => {
+    setText((prevText: any) => ({
+      ...prevText,
+      ["subTotalTxt"]: subtotal,
+      ["totalTax"]: totalTax,
+      ["totalDiscount"]: totalDiscount,
+      ["totalTxt"]: total,
+      ["balanceDueTxt"]: balanceDue,
+    }));
+  }, [
+    text.taxTxt,
+    text.taxType,
+    text.discountTxt,
+    text.discountType,
+    text.shippingTxt,
+  ]);
 
   return (
     <>
@@ -654,7 +670,8 @@ const PdfCompo = () => {
                         className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
                       />
                       <span className="text-gray-500 text-sm mr-2">
-                        {text.shippingType === 1 ? "%" : text?.currency}
+                        {/* {text.shippingType === 1 ? "%" : text?.currency} */}
+                        {text?.currency}
                       </span>
                       {/* <button
                         className="text-[#34495e] hover:text-white hover:bg-[#34495e] duration-300 h-full w-1/2 border-l flex items-center justify-center rounded-md px-1"
