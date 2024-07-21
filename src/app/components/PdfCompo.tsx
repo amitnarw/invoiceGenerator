@@ -31,10 +31,12 @@ const PdfCompo = () => {
     poNumber: "PO Number",
     poNumberTxt: "",
     item: "Item",
+    taxDrop: "Tax",
     quantity: "Quantity",
     rate: "Rate",
     amount: "Amount",
     itemTxt1: [""],
+    taxDropTxt: [{ title: "0", name: "0", value: 0 }],
     quantityTxt1: [1],
     rateTxt1: [0],
     amountTxt1: [0],
@@ -144,6 +146,16 @@ const PdfCompo = () => {
       quantityTxt1: [...prevText.quantityTxt1, 1],
       rateTxt1: [...prevText.rateTxt1, 0],
     }));
+    const newTaxDropTxt = [...text.taxDropTxt];
+    newTaxDropTxt[text.taxDropTxt.length] = {
+      ...newTaxDropTxt[text.taxDropTxt.length],
+      title: "0",
+      value: "0",
+    };
+    setText((prevState: any) => ({
+      ...prevState,
+      taxDropTxt: newTaxDropTxt,
+    }));
   };
 
   // const handleDownloadPdf = async () => {
@@ -211,25 +223,62 @@ const PdfCompo = () => {
     }
   };
 
+  const handleTaxDropChange = (index: number, e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOption = e.target.selectedOptions[0].text; // Get the name of the selected option
+    const newTaxDropTxt = [...text.taxDropTxt];
+    newTaxDropTxt[index] = {
+      ...newTaxDropTxt[index],
+      title: e.target.value,
+      name: selectedOption,
+    };
+    setText((prevState: any) => ({
+      ...prevState,
+      taxDropTxt: newTaxDropTxt,
+    }));
+  };
+
+  const handleTaxValueChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newTaxDropTxt = [...text.taxDropTxt];
+    newTaxDropTxt[index] = {
+      ...newTaxDropTxt[index],
+      value: e.target.value,
+    };
+    setText((prevState: any) => ({
+      ...prevState,
+      taxDropTxt: newTaxDropTxt,
+    }));
+  };
+
   const subtotal = text.itemTxt1.reduce((acc: any, item: any, index: any) => {
-    return acc + text.quantityTxt1[index] * text.rateTxt1[index];
+    return acc + text.quantityTxt1[index] * text.rateTxt1[index] +
+    (text?.taxDropTxt[index]?.title === "0"
+      ? 0
+      : text?.taxDropTxt[index]?.title === "1"
+      ? ((text.quantityTxt1[index] *
+          text.rateTxt1[index]) *
+          Number(text?.taxDropTxt[index]?.value)) /
+        100
+      : Number(text?.taxDropTxt[index]?.value));
   }, 0);
 
   const totalTax = Number(
     text?.taxType === 1 ? (subtotal * text?.taxTxt) / 100 : text?.taxTxt
   );
-  const totalDiscount =
+  const totalDiscount = (
     text?.discountType === 1
       ? (subtotal * text?.discountTxt) / 100
-      : text?.discountTxt;
+      : text?.discountTxt);
   const totalRaw = (
     subtotal +
     totalTax -
     totalDiscount +
     Number(text?.shippingTxt)
   ).toFixed(2);
-  const total = Number(totalRaw);
-  const balanceDue = total - text?.amountPaidTxt;
+  const totalNew = Number(totalRaw);
+  const balanceDueNew = totalNew - text?.amountPaidTxt;
 
   useEffect(() => {
     setText((prevText: any) => ({
@@ -237,8 +286,8 @@ const PdfCompo = () => {
       ["subTotalTxt"]: subtotal,
       ["totalTax"]: totalTax,
       ["totalDiscount"]: totalDiscount,
-      ["totalTxt"]: total,
-      ["balanceDueTxt"]: balanceDue,
+      ["totalTxt"]: totalNew,
+      ["balanceDueNew"]: totalNew - text?.amountPaidTxt,
     }));
   }, [
     text.taxTxt,
@@ -246,16 +295,23 @@ const PdfCompo = () => {
     text.discountTxt,
     text.discountType,
     text.shippingTxt,
+    // text.balanceDueNew,
+    text.amountPaidTxt,
+    text.taxDropTxt,
+    text.rateTxt1
   ]);
+
+  console.log(text, (text.quantityTxt1[0] * text.rateTxt1[0]) +
+  Number(text?.taxDropTxt[0]?.value), totalNew - text?.amountPaidTxt, "TEST");
 
   return (
     <>
       <div
-        className={`w-full flex lg:px-16 px-4 lg:gap-10 gap-4 mt-10 lg:flex-row flex-col mb-20 ${
+        className={`w-full flex lg:px-16 px-3 lg:gap-10 gap-4 mt-10 lg:flex-row flex-col mb-20 ${
           visible ? "visible" : "hidden"
         }`}
       >
-        <div className="bg-white h-full lg:w-5/6 w-full rounded-xl p-5">
+        <div className="bg-white h-full lg:w-5/6 w-full rounded-xl sm:p-5 p-2">
           <div className="flex justify-between lg:flex-row flex-col">
             <input
               type="file"
@@ -434,22 +490,31 @@ const PdfCompo = () => {
             </div>
           </div>
 
-          <div className="lg:flex hidden mt-8 bg-[#192a56] text-white rounded-lg pr-8">
-            <input
-              name="item"
-              type="text"
-              value={text.item}
-              onChange={handleSetText}
-              className="inputHoverShowWhite w-full"
-            />
+          <div className="lg:flex hidden mt-8 bg-[#192a56] text-white rounded-lg">
+            <div className="w-full flex">
+              <input
+                name="item"
+                type="text"
+                value={text.item}
+                onChange={handleSetText}
+                className="inputHoverShowWhite w-full"
+              />
+              <input
+                name="taxDrop"
+                type="text"
+                value={text.taxDrop}
+                onChange={handleSetText}
+                className="inputHoverShowWhite w-4/12"
+              />
+            </div>
+
             <div className="flex w-3/12">
               <input
                 name="quantity"
                 type="text"
                 value={text.quantity}
                 onChange={handleSetText}
-                className="inputHoverShowWhite w-4/5 text-center"
-                style={{ padding: "0px" }}
+                className="inputHoverShowWhite w-3/5 text-center !px-0 !text-left"
               />
               <input
                 name="rate"
@@ -464,13 +529,13 @@ const PdfCompo = () => {
               type="text"
               value={text.amount}
               onChange={handleSetText}
-              className="inputHoverShowWhite w-2/12 text-center"
+              className="inputHoverShowWhite w-2/12 text-center !px-0 !ml-[-20px]"
             />
           </div>
 
           {text?.itemTxt1.map((item: any, index: number) => (
             <div
-              className="lg:flex grid gap-1 border lg:border-transparent border-[#d5dbe2]/50 lg:p-0 p-4 rounded-lg lg:mt-1.5 mt-10"
+              className="lg:flex grid gap-1 border lg:border-transparent border-[#d5dbe2]/50 lg:p-0 p-2 rounded-lg lg:mt-1.5 mt-10"
               key={index}
             >
               <input
@@ -481,17 +546,61 @@ const PdfCompo = () => {
                 onChange={(e) => handleSetTextArray(e, index)}
                 className="inputNonHoverShowNoWidth w-full lg:order-1 order-3"
               />
+              {/* <select className="w-3/12 p-2 rounded-lg outline-none bg-white border-[1px] border-[#d5dbe2] text-[12px]">
+                  <option value="1">SGST + CGST (%)</option>
+                  <option value="2">SGST + CGST ({text?.currency})</option>
+                  <option value="3">UTGST + CGST (%)</option>
+                  <option value="4">UTGST + CGST ({text?.currency})</option>
+                  <option value="5">IGST (%)</option>
+                  <option value="6">IGST ({text?.currency})</option>
+                  <option value="7">VAT (%)</option>
+                  <option value="8">VAT ({text?.currency})</option>
+                </select>
+                <input
+                name="taxDropTxt"
+                type="number"
+                placeholder="0"
+                // value={text.taxDropTxt[index].value}
+                // onChange={(e) => handleSetTextArray(e, index)}
+                className="inputNonHoverShowNoWidth w-1/12 !px-1"
+              /> */}
 
-              <div className="flex sm:w-6/12 lg:w-3/12 w-10/12 gap-1 lg:order-2 order-2">
+              <div className="flex sm:w-6/12 lg:w-8/12 w-12/12 gap-1 lg:order-2 order-2 items-center">
+                <select
+                  className="w-8/12 p-2 rounded-lg outline-none bg-white border-[1px] border-[#d5dbe2] text-[12px] lg:order-1 order-4"
+                  value={text.taxDropTxt[index]?.title}
+                  onChange={(e) => handleTaxDropChange(index, e)}
+                >
+                  <option value={"1"}>SGST + CGST (%)</option>
+                  <option value={"2"}>SGST + CGST ({text?.currency})</option>
+                  <option value={"1"}>UTGST + CGST (%)</option>
+                  <option value={"2"}>UTGST + CGST ({text?.currency})</option>
+                  <option value={"1"}>IGST (%)</option>
+                  <option value={"2"}>IGST ({text?.currency})</option>
+                  <option value={"1"}>VAT (%)</option>
+                  <option value={"2"}>VAT ({text?.currency})</option>
+                  <option value={"0"}>No tax</option>
+                </select>
+                <input
+                  name="taxDropTxt"
+                  type="number"
+                  placeholder="0"
+                  value={text.taxDropTxt[index]?.value}
+                  onChange={(e) => handleTaxValueChange(index, e)}
+                  className="inputNonHoverShowNoWidth w-3/12 !px-1 lg:order-2 order-5"
+                />
                 <input
                   name="quantityTxt1"
                   type="number"
                   value={text.quantityTxt1[index]}
                   onChange={(e) => handleSetTextArray(e, index)}
-                  className="inputNonHoverShowNoWidth sm:w-1/3 w-2/5 !px-2"
+                  className="inputNonHoverShowNoWidth sm:w-2/6 w-2/5 !px-2  sm:order-3 order-1"
                 />
+                <span className="text-gray-500 sm:hidden inline order-2">
+                  x
+                </span>
 
-                <div className="sm:w-2/3 w-3/5 flex items-center gap-1 pl-4 border border-[#d5dbe2] rounded-md">
+                <div className="sm:w-3/5 w-3/5 flex items-center gap-1 sm:pl-4 pl-1 border border-[#d5dbe2] rounded-md  lg:order-4 order-2">
                   <span className="text-gray-500 text-sm">
                     {text?.currency}
                   </span>
@@ -500,24 +609,32 @@ const PdfCompo = () => {
                     type="number"
                     value={text.rateTxt1[index]}
                     onChange={(e) => handleSetTextArray(e, index)}
-                    className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg"
+                    className="w-full text-sm outline-none rounded-sm duration-300 sm:px-3 px-0 py-1.5 border-transparent bg-transparent focus:shadow-lg"
                   />
                 </div>
               </div>
 
               <span
                 className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${
-                  index === 0 ? "mr-9" : "mr-0"
+                  index === 0 ? "mr-4" : "mr-[-12px]"
                 }`}
               >
                 <span className="lg:hidden inline mr-1">Amount:</span>
                 {text.currency}{" "}
-                {text.quantityTxt1[index] * text.rateTxt1[index]}
+                {text.quantityTxt1[index] * text.rateTxt1[index] +
+                  (text?.taxDropTxt[index]?.title === "0"
+                    ? 0
+                    : text?.taxDropTxt[index]?.title === "1"
+                    ? ((text.quantityTxt1[index] *
+                        text.rateTxt1[index]) *
+                        Number(text?.taxDropTxt[index]?.value)) /
+                      100
+                    : Number(text?.taxDropTxt[index]?.value))}
               </span>
 
               {index !== 0 && (
                 <button
-                  className="px-2 py-2 flex items-center justify-center rounded-md text-[#16a085] order-4 duration-300"
+                  className="px-1 py-2 flex items-center justify-center rounded-md text-[#16a085] order-4 duration-300"
                   onClick={() => handleDeleteTextArray(index)}
                 >
                   <IoMdClose />
@@ -599,7 +716,7 @@ const PdfCompo = () => {
                         onChange={handleSetText}
                         className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
                       />
-                      <span className="text-gray-500 text-sm mr-2">
+                      <span className="text-gray-500 text-sm mr-1">
                         {text.taxType === 1 ? "%" : text?.currency}
                       </span>
                       <button
@@ -634,7 +751,7 @@ const PdfCompo = () => {
                         onChange={handleSetText}
                         className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
                       />
-                      <span className="text-gray-500 text-sm mr-2">
+                      <span className="text-gray-500 text-sm mr-1">
                         {text.discountType === 1 ? "%" : text?.currency}
                       </span>
                       <button
@@ -669,7 +786,7 @@ const PdfCompo = () => {
                         onChange={handleSetText}
                         className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
                       />
-                      <span className="text-gray-500 text-sm mr-2">
+                      <span className="text-gray-500 text-sm mr-1">
                         {/* {text.shippingType === 1 ? "%" : text?.currency} */}
                         {text?.currency}
                       </span>
@@ -722,7 +839,7 @@ const PdfCompo = () => {
                   <input
                     name="total"
                     type="text"
-                    value={text.total}
+                    value={text.totalNew}
                     onChange={handleSetText}
                     className="inputHoverShow text-end"
                   />
@@ -731,7 +848,7 @@ const PdfCompo = () => {
                     {text?.currency}{" "}
                     {/* {text.quantityTxt1 * text.rateTxt1 +
                       (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100} */}
-                    {total}
+                    {totalNew}
                   </span>
                 </div>
                 <div className="flex gap-1 sm:mr-12 mr-8">
@@ -743,7 +860,7 @@ const PdfCompo = () => {
                     className="inputHoverShow text-end"
                   />
                   <div className="w-2/4 flex items-center gap-1 pl-2 mt-2 border-[1px] border-[#d5dbe2] rounded-md">
-                    <span className="text-gray-500 text-sm mr-2">
+                    <span className="text-gray-500 text-sm mr-1">
                       {text?.currency}{" "}
                     </span>
                     <input
@@ -769,7 +886,7 @@ const PdfCompo = () => {
                     {/* {text.quantityTxt1 * text.rateTxt1 +
                       (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100 -
                       text.amountPaidTxt} */}
-                    {balanceDue}
+                    {balanceDueNew}
                   </span>
                 </div>
               </div>
