@@ -101,7 +101,6 @@ export default function Home(props: any) {
     const taxTotals = calculateTaxTotals(text);
     setTaxTotalsNew(taxTotals);
     const totals = calculateTaxTotals(text);
-    console.log("Calculated tax totals:", totals); // Debugging line
     setTaxTotals(totals);
   }, [props.text]);
 
@@ -290,7 +289,7 @@ const MyPDFDocument = ({ text, file, taxTotalsNew, taxTotals }: any) => (
         <Text style={{ width: "12%" }}>Amount</Text>
       </View>
       {text?.itemTxt1.map((item: any, index: number) => (
-        <View style={styles.itemsItemDiv}>
+        <View style={styles.itemsItemDiv} key={index}>
           <Text style={{ ...styles.textAns, width: "85%" }}>
             {text?.itemTxt1[index]}
           </Text>
@@ -340,14 +339,13 @@ const MyPDFDocument = ({ text, file, taxTotalsNew, taxTotals }: any) => (
             </Text>
           )}
 
-          <Text style={{ ...styles.textQues, textAlign: "right" }}>
+          {/* <Text style={{ ...styles.textQues, textAlign: "right" }}>
             {text?.tax}{" "}
-            {/* {`(${text?.taxTxt} ${text?.taxType === 1 ? "%" : text?.currency})`} */}
-          </Text>
+          </Text> */}
 
           {taxTotalsNew?.map((taxTotal: any, index: number) => (
-          <Text key={index}>
-            <strong>{taxTotal.name}:</strong> {text.currency} {taxTotal.total}
+          <Text key={index} style={{ ...styles.textQues, textAlign: "right" }}>
+            {taxTotal.name}:
           </Text>
         ))}
 
@@ -374,7 +372,6 @@ const MyPDFDocument = ({ text, file, taxTotalsNew, taxTotals }: any) => (
           }}
         >
           <Text style={{ ...styles.textAns, textAlign: "right" }}>
-            {/* {text?.currency} {text.quantityTxt1 * text.rateTxt1} */}
             {text?.currency} {text?.subTotalTxt}
           </Text>
 
@@ -388,15 +385,11 @@ const MyPDFDocument = ({ text, file, taxTotalsNew, taxTotals }: any) => (
             {text?.currency} {text?.totalTax}
           </Text> */}
 
-          {taxTotalsNew?.map((taxTotal: any, index: number) => (
-            <Text key={index}>
-              <strong>{taxTotal.name}:</strong> {text.currency} {taxTotal.total}
-            </Text>
-          ))}
+
           {taxTotals?.length > 0 ? (
           taxTotals?.map((taxTotal: any, index: any) => (
-            <Text key={index}>
-              <strong>{taxTotal.name}:</strong> {text.currency} {taxTotal.total}
+            <Text key={index} style={{ ...styles.textQues, textAlign: "right" }}>
+              {text.currency} {taxTotal.total}
             </Text>
           ))
         ) : (

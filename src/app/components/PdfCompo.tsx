@@ -36,7 +36,7 @@ const PdfCompo = () => {
     rate: "Rate",
     amount: "Amount",
     itemTxt1: [""],
-    taxDropTxt: [{ title: "0", name: "0", value: 0 }],
+    taxDropTxt: [{ title: "9", name: "0", value: 0 }],
     quantityTxt1: [1],
     rateTxt1: [0],
     amountTxt1: [0],
@@ -573,13 +573,13 @@ const PdfCompo = () => {
                 >
                   <option value={"1"}>SGST + CGST (%)</option>
                   <option value={"2"}>SGST + CGST ({text?.currency})</option>
-                  <option value={"1"}>UTGST + CGST (%)</option>
-                  <option value={"2"}>UTGST + CGST ({text?.currency})</option>
-                  <option value={"1"}>IGST (%)</option>
-                  <option value={"2"}>IGST ({text?.currency})</option>
-                  <option value={"1"}>VAT (%)</option>
-                  <option value={"2"}>VAT ({text?.currency})</option>
-                  <option value={"0"}>No tax</option>
+                  <option value={"3"}>UTGST + CGST (%)</option>
+                  <option value={"4"}>UTGST + CGST ({text?.currency})</option>
+                  <option value={"5"}>IGST (%)</option>
+                  <option value={"6"}>IGST ({text?.currency})</option>
+                  <option value={"7"}>VAT (%)</option>
+                  <option value={"8"}>VAT ({text?.currency})</option>
+                  <option value={"9"}>No tax</option>
                 </select>
                 <input
                   name="taxDropTxt"
@@ -622,9 +622,9 @@ const PdfCompo = () => {
                 <span className="lg:hidden inline mr-1">Amount:</span>
                 {text.currency}{" "}
                 {text.quantityTxt1[index] * text.rateTxt1[index] +
-                  (text?.taxDropTxt[index]?.title === "0"
+                  (text?.taxDropTxt[index]?.title === "9"
                     ? 0
-                    : text?.taxDropTxt[index]?.title === "1"
+                    : text?.taxDropTxt[index]?.title % 2 !== 0
                     ? ((text.quantityTxt1[index] *
                         text.rateTxt1[index]) *
                         Number(text?.taxDropTxt[index]?.value)) /
