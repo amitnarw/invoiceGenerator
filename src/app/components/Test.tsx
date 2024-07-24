@@ -118,7 +118,7 @@ export default function Home(props: any) {
     text?.taxDropTxt?.forEach((tax, index) => {
       const itemAmount = text.quantityTxt1[index] * text.rateTxt1[index];
       const taxValue =
-        tax.title === "1" ? (itemAmount * tax.value) / 100 : tax.value;
+        Number(tax.title) % 2 !== 0 ? (itemAmount * tax.value) / 100 : tax.value;
 
       if (taxTotalsMap[tax.name]) {
         taxTotalsMap[tax.name] += taxValue;
@@ -133,7 +133,6 @@ export default function Home(props: any) {
     }));
   };
 
-  console.log(taxTotalsNew, "taxTotalsNew");
 
   return (
     <div>
@@ -274,9 +273,6 @@ const MyPDFDocument = ({ text, file, taxTotalsNew, taxTotals }: any) => (
             }}
           >
             {text?.currency}{" "}
-            {/* {text.quantityTxt1 * text.rateTxt1 +
-              (text.quantityTxt1 * text.rateTxt1 * text.taxTxt) / 100 -
-              text.amountPaidTxt} */}
             {text?.balanceDueNew}
           </Text>
         </View>
@@ -312,15 +308,16 @@ const MyPDFDocument = ({ text, file, taxTotalsNew, taxTotals }: any) => (
           <Text style={{ ...styles.textAns, width: "10%", textAlign: "left" }}>
             {/* {text?.currency} {text.quantityTxt1[index] * text.rateTxt1[index]} */}
             {/* {text?.currency} {text.amountTxt1[index]} */}
-            {text.quantityTxt1[index] * text.rateTxt1[index] +
-              (text?.taxDropTxt[index]?.title === "0"
-                ? 0
-                : text?.taxDropTxt[index]?.title === "1"
-                ? (text.quantityTxt1[index] *
-                    text.rateTxt1[index] *
-                    Number(text?.taxDropTxt[index]?.value)) /
-                  100
-                : Number(text?.taxDropTxt[index]?.value))}
+            {text.currency}{" "}
+                {text.quantityTxt1[index] * text.rateTxt1[index] +
+                  (text?.taxDropTxt[index]?.title === "9"
+                    ? 0
+                    : text?.taxDropTxt[index]?.title % 2 !== 0
+                    ? ((text.quantityTxt1[index] *
+                        text.rateTxt1[index]) *
+                        Number(text?.taxDropTxt[index]?.value)) /
+                      100
+                    : Number(text?.taxDropTxt[index]?.value))}
           </Text>
         </View>
       ))}
@@ -339,15 +336,52 @@ const MyPDFDocument = ({ text, file, taxTotalsNew, taxTotals }: any) => (
             </Text>
           )}
 
-          {/* <Text style={{ ...styles.textQues, textAlign: "right" }}>
-            {text?.tax}{" "}
-          </Text> */}
-
-          {taxTotalsNew?.map((taxTotal: any, index: number) => (
-          <Text key={index} style={{ ...styles.textQues, textAlign: "right" }}>
-            {taxTotal.name}:
+         
+        </View>
+        <View
+          style={{
+            ...styles.secondDivRightDivInside,
+            width: "21%",
+          }}
+        >
+          <Text style={{ ...styles.textAns, textAlign: "right" }}>
+            {text?.currency} {text?.subTotalTxt}
           </Text>
-        ))}
+
+          {text?.discountTxt && (
+            <Text style={{ ...styles.textQues, textAlign: "right" }}>
+              - {text?.currency} {text?.totalDiscount}
+            </Text>
+          )}
+
+  
+        </View>
+      </View>
+
+      <View style={{...styles.totalDiv, marginTop: "2px"}}>
+        <View style={{ ...styles.secondDivRightDivInside, width: "35%", gap: "0px" }}>
+          {text?.itemTxt1.map((item: any, index: number) => (
+            <View style={{...styles.itemsItemDiv, justifyContent: "flex-end", paddingRight: "0px"}} key={index}>
+              <Text style={{ ...styles.textQues, textAlign: "right", fontSize: "9px" }}>
+                {text?.taxDropTxt[index]?.name}
+              </Text>
+            </View>
+          ))}
+        </View>
+        <View style={{...styles.secondDivRightDivInside, width: "21%", gap: "0px"}}>
+          {text?.itemTxt1.map((item: any, index: number) => (
+            <View style={{...styles.itemsItemDiv, justifyContent: "flex-end", paddingRight: "0px"}} key={index}>
+              <Text style={{ ...styles.textQues, textAlign: "right", fontSize: "9px" }}>
+              {text?.currency} {text?.taxDropTxt[index]?.value}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={{...styles.totalDiv, marginTop: "7px"}}>
+        <View style={{ ...styles.secondDivRightDivInside, width: "35%" }}>
+    
 
           {text?.shippingTxt && (
             <Text style={{ ...styles.textQues, textAlign: "right" }}>
@@ -371,30 +405,6 @@ const MyPDFDocument = ({ text, file, taxTotalsNew, taxTotals }: any) => (
             width: "21%",
           }}
         >
-          <Text style={{ ...styles.textAns, textAlign: "right" }}>
-            {text?.currency} {text?.subTotalTxt}
-          </Text>
-
-          {text?.discountTxt && (
-            <Text style={{ ...styles.textQues, textAlign: "right" }}>
-              {text?.currency} {text?.totalDiscount}
-            </Text>
-          )}
-
-          {/* <Text style={{ ...styles.textQues, textAlign: "right" }}>
-            {text?.currency} {text?.totalTax}
-          </Text> */}
-
-
-          {taxTotals?.length > 0 ? (
-          taxTotals?.map((taxTotal: any, index: any) => (
-            <Text key={index} style={{ ...styles.textQues, textAlign: "right" }}>
-              {text.currency} {taxTotal.total}
-            </Text>
-          ))
-        ) : (
-          <Text>No tax totals available</Text>
-        )}
 
           {text?.shippingTxt && (
             <Text style={{ ...styles.textQues, textAlign: "right" }}>

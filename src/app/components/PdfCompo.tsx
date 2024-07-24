@@ -149,8 +149,8 @@ const PdfCompo = () => {
     const newTaxDropTxt = [...text.taxDropTxt];
     newTaxDropTxt[text.taxDropTxt.length] = {
       ...newTaxDropTxt[text.taxDropTxt.length],
-      title: "0",
-      value: "0",
+      title: "9",
+      value: 0,
     };
     setText((prevState: any) => ({
       ...prevState,
@@ -254,9 +254,9 @@ const PdfCompo = () => {
 
   const subtotal = text.itemTxt1.reduce((acc: any, item: any, index: any) => {
     return acc + text.quantityTxt1[index] * text.rateTxt1[index] +
-    (text?.taxDropTxt[index]?.title === "0"
+    (text?.taxDropTxt[index]?.title == 9
       ? 0
-      : text?.taxDropTxt[index]?.title === "1"
+      : text?.taxDropTxt[index]?.title % 2 !== 0
       ? ((text.quantityTxt1[index] *
           text.rateTxt1[index]) *
           Number(text?.taxDropTxt[index]?.value)) /
@@ -301,8 +301,6 @@ const PdfCompo = () => {
     text.rateTxt1
   ]);
 
-  console.log(text, (text.quantityTxt1[0] * text.rateTxt1[0]) +
-  Number(text?.taxDropTxt[0]?.value), totalNew - text?.amountPaidTxt, "TEST");
 
   return (
     <>
@@ -699,7 +697,7 @@ const PdfCompo = () => {
                     {text?.currency} {subtotal}
                   </span>
                 </div>
-                {!taxDiscountShipping.tax && (
+                {/* {!taxDiscountShipping.tax && (
                   <div className="flex gap-1">
                     <input
                       name="tax"
@@ -733,7 +731,7 @@ const PdfCompo = () => {
                       <IoMdClose />
                     </button>
                   </div>
-                )}
+                )} */}
                 {!taxDiscountShipping.discount && (
                   <div className="flex gap-1">
                     <input
