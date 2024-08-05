@@ -205,12 +205,12 @@ const PdfCompo = () => {
 
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
 
       <div className={`${visible ? "visible" : "hidden"}`}>
         <Header />
         <div
-          className="w-full flex lg:px-16 px-3 lg:gap-10 gap-4 mt-10 lg:flex-row flex-col mb-20"
+          className="w-full flex lg:px-16 px-3 lg:gap-10 gap-4 mt-10 lg:flex-row flex-col mb-10 mt-32"
         >
           <div className="bg-white h-full lg:w-5/6 w-full rounded-xl sm:p-5 p-2">
             <div className="flex justify-between lg:flex-row flex-col">
