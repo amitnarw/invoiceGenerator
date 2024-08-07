@@ -11,16 +11,18 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center">
-      <div className="w-5/12">
-        <h1 className="font-semibold sm:text-4xl text-xl lg:text-center text-start mb-8">
+    <div className="w-full h-screen flex items-center justify-center bg-white/80">
+      <div className="w-[700px] mx-3 mb-28">
+        <h1 className="font-semibold sm:text-4xl text-xl text-center mb-8">
           NEXINVOICE
         </h1>
-        <div className="bg-white rounded-xl shadow-lg p-10">
+        <div className="bg-white rounded-xl shadow-lg px-10 pb-10 pt-6 border border-gray-100">
           <h1 className="text-center font-semibold text-3xl">Sign in</h1>
-          <p className="text-center text-gray-500">Welcome back!</p>
+          <p className="text-center text-gray-500 text-sm mt-1">
+            Welcome back!
+          </p>
           <form action={handleSubmit}>
-            <div className="mt-5">
+            <div className="mt-8">
               <p className="text-sm text-gray-500 mb-2 ml-2">Email</p>
               <input
                 name="email"
@@ -42,10 +44,10 @@ const Login = () => {
             <button className="bg-[#3498db] hover:bg-[#2980b9] text-white w-full p-2 rounded-md mt-6 duration-300">
               Sign in
             </button>
-            <div className="text-center mt-5">
-              <span>Don't have an account yet?</span>
+            <div className="text-center mt-5 text-sm">
+              <span>Don{"'"}t have an account yet?</span>
               <button className="text-[#34495e] hover:text-[#2c3e50] cursor-pointer duration-300 font-medium px-2">
-                Sign up
+                Sign Up
               </button>
             </div>
           </form>
