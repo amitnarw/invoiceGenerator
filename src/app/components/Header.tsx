@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { RiMenu4Fill } from "react-icons/ri";
@@ -33,11 +34,20 @@ const Header = () => {
             Home
           </li>
           <li className="flex flex-col gap-4 mx-6">
-            <button className="bg-[#3498db] hover:bg-[#2980b9] px-6 py-2 rounded-lg text-white font-medium duration-300">
+            <Link
+              href={"/auth/login"}
+              className="bg-[#3498db] hover:bg-[#2980b9] px-6 py-2 rounded-lg text-white font-medium duration-300"
+            >
               Login
-            </button>
-            <button className="bg-[#34495e] hover:bg-[#2c3e50] px-6 py-2 rounded-lg text-white font-medium duration-300">
+            </Link>
+            <Link
+              href={"/auth/register"}
+              className="bg-[#34495e] hover:bg-[#2c3e50] px-6 py-2 rounded-lg text-white font-medium duration-300"
+            >
               Signup
+            </Link>
+            <button className="bg-[#f39c12] hover:bg-[#d35400] px-6 py-2 rounded-lg text-white font-medium duration-300">
+              Logout
             </button>
           </li>
         </ul>
@@ -51,11 +61,20 @@ const Header = () => {
         </p>
       </div>
       <div className="lg:flex gap-4 w-full justify-end hidden">
-        <button className="bg-[#3498db] hover:bg-[#2980b9] px-6 py-2 rounded-lg text-white font-medium duration-300">
+        <Link
+          href={"/auth/login"}
+          className="bg-[#3498db] hover:bg-[#2980b9] px-6 py-2 rounded-lg text-white font-medium duration-300"
+        >
           Login
-        </button>
-        <button className="bg-[#34495e] hover:bg-[#2c3e50] px-6 py-2 rounded-lg text-white font-medium duration-300">
+        </Link>
+        <Link
+          href={"/auth/register"}
+          className="bg-[#34495e] hover:bg-[#2c3e50] px-6 py-2 rounded-lg text-white font-medium duration-300"
+        >
           Signup
+        </Link>
+        <button className="bg-[#f39c12] hover:bg-[#d35400] px-6 py-2 rounded-lg text-white font-medium duration-300">
+          Logout
         </button>
       </div>
     </div>

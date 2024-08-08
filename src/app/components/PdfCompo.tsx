@@ -6,7 +6,7 @@ import { FiDownload } from "react-icons/fi";
 import { HiOutlineRefresh } from "react-icons/hi";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
 import PDF from "./PDF";
-import { AiTwotoneCloseCircle } from "react-icons/ai";
+import { AiOutlineSave, AiTwotoneCloseCircle } from "react-icons/ai";
 import Footer from "./Footer";
 import Header from "./Header";
 
@@ -65,8 +65,8 @@ const PdfCompo = () => {
       taxDropTxt: { type: 0, value: 0 },
       quantityTxt: 1,
       rateTxt: 0,
-      amountTxt: 0
-    }
+      amountTxt: 0,
+    },
   ]);
   const [visible, setVisible] = useState(true);
   const [taxDiscountShipping, setTaxDiscountShipping] = useState({
@@ -93,63 +93,78 @@ const PdfCompo = () => {
   const handleText = (e: any) => {
     const name = e.target.name;
     const value = e.target.value;
-  
+
     setText((prevText: any) => {
       const updatedText = { ...prevText, [name]: value };
       const totals = calculateTotals(list, updatedText);
-  
+
       return {
         ...updatedText,
         ...totals,
       };
     });
   };
-  
+
   const handleArrayAdd = () => {
-    const newArray = [...list, {
-      itemTxt: "",
-      HSNTxt: "",
-      taxDropTxt: { type: 0, value: 0, name: "No tax", total: 0 },
-      quantityTxt: 1,
-      rateTxt: 0,
-      amountTxt: 0
-    }];
+    const newArray = [
+      ...list,
+      {
+        itemTxt: "",
+        HSNTxt: "",
+        taxDropTxt: { type: 0, value: 0, name: "No tax", total: 0 },
+        quantityTxt: 1,
+        rateTxt: 0,
+        amountTxt: 0,
+      },
+    ];
     setList(newArray);
   };
-  
+
   const handleArrayUpdate = (e: any, type: string, index: number) => {
     const name = e.target.name;
     const value = e.target.value;
-  
+
     setList((prevList: any) => {
       const updatedList = prevList.map((item: any, i: number) => {
         if (i === index) {
           let updatedItem;
           if (name === "taxDropTxt") {
             const taxOption = taxOptions[value];
-            const taxAmount = (item.quantityTxt * item.rateTxt * taxOption.value) / 100;
+            const taxAmount =
+              (item.quantityTxt * item.rateTxt * taxOption.value) / 100;
             updatedItem = {
               ...item,
-              taxDropTxt: { type: Number(value), value: taxOption.value, name: taxOption.name, total: taxAmount },
-              amountTxt: (item.quantityTxt || 0) * (item.rateTxt || 0) + taxAmount,
+              taxDropTxt: {
+                type: Number(value),
+                value: taxOption.value,
+                name: taxOption.name,
+                total: taxAmount,
+              },
+              amountTxt:
+                (item.quantityTxt || 0) * (item.rateTxt || 0) + taxAmount,
             };
           } else {
             updatedItem = { ...item, [name]: value };
-            const taxAmount = (updatedItem.quantityTxt * updatedItem.rateTxt * updatedItem.taxDropTxt.value) / 100;
+            const taxAmount =
+              (updatedItem.quantityTxt *
+                updatedItem.rateTxt *
+                updatedItem.taxDropTxt.value) /
+              100;
             updatedItem.taxDropTxt.total = taxAmount;
-            updatedItem.amountTxt = updatedItem.quantityTxt * updatedItem.rateTxt + taxAmount;
+            updatedItem.amountTxt =
+              updatedItem.quantityTxt * updatedItem.rateTxt + taxAmount;
           }
           return updatedItem;
         }
         return item;
       });
-  
+
       const totals = calculateTotals(updatedList, text);
       setText((prevText: any) => ({ ...prevText, ...totals }));
       return updatedList;
     });
   };
-  
+
   const handleArrayDelete = (index: number) => {
     setList((prevList: any) => {
       const updatedList = prevList.filter((_: any, i: number) => i !== index);
@@ -158,7 +173,7 @@ const PdfCompo = () => {
       return updatedList;
     });
   };
-  
+
   const toggleDiscountType = () => {
     setText((prevText: any) => {
       const newDiscountType = prevText.discountType === 1 ? 2 : 1;
@@ -170,17 +185,18 @@ const PdfCompo = () => {
       };
     });
   };
-  
+
   const calculateTotals = (list: any[], text: any) => {
     const subtotalTxt = list.reduce((total, item) => total + item.amountTxt, 0);
-    const discount = text.discountType == 1
-      ? (subtotalTxt * text.discountTxt) / 100
-      : text.discountTxt;
+    const discount =
+      text.discountType == 1
+        ? (subtotalTxt * text.discountTxt) / 100
+        : text.discountTxt;
     const totalTxt = subtotalTxt - discount + Number(text.shippingTxt);
     const balanceDueTxt = totalTxt - Number(text.amountPaidTxt);
     return { subtotalTxt, totalTxt, balanceDueTxt };
   };
-  
+
   const handleSelectFile = (e: any) => {
     setFile(URL.createObjectURL(e.target.files[0]));
   };
@@ -203,15 +219,11 @@ const PdfCompo = () => {
     }
   };
 
-
   return (
     <div className="flex flex-col w-full">
-
       <div className={`${visible ? "visible" : "hidden"}`}>
         <Header />
-        <div
-          className="w-full flex lg:px-16 px-3 lg:gap-10 gap-4 mt-10 lg:flex-row flex-col mb-10 mt-32"
-        >
+        <div className="w-full flex lg:px-16 px-3 lg:gap-10 gap-4 mt-10 lg:flex-row flex-col mb-10 mt-32">
           <div className="bg-white h-full lg:w-5/6 w-full rounded-xl sm:p-5 p-2">
             <div className="flex justify-between lg:flex-row flex-col">
               <input
@@ -391,7 +403,9 @@ const PdfCompo = () => {
               </div>
             </div>
             <div className="mt-4">
-              <span className="w-2/4 text-end text-sm text-gray-500 mr-3">Place of Supply:</span>
+              <span className="w-2/4 text-end text-sm text-gray-500 mr-3">
+                Place of Supply:
+              </span>
               <input
                 name="placeOfSupply"
                 type="text"
@@ -403,7 +417,6 @@ const PdfCompo = () => {
 
             <div className="lg:flex hidden mt-8 bg-[#192a56] text-white rounded-lg">
               <div className="flex w-full">
-
                 <div className="flex w-full gap-1">
                   <input
                     name="item"
@@ -528,12 +541,12 @@ const PdfCompo = () => {
                 </div>
 
                 <span
-                  className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${index === 0 ? "mr-4" : "mr-[-12px]"
-                    }`}
+                  className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${
+                    index === 0 ? "mr-4" : "mr-[-12px]"
+                  }`}
                 >
                   <span className="lg:hidden inline mr-1">Amount:</span>
-                  {text.currency}{" "}
-                  {item?.amountTxt}
+                  {text.currency} {item?.amountTxt}
                   {/* {text.quantityTxt[index] * text.rateTxt[index] +
                   (text?.taxDropTxt[index]?.type === "9"
                     ? 0
@@ -722,8 +735,7 @@ const PdfCompo = () => {
                       className="inputHoverShow text-end"
                     />
                     <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                      {text?.currency}{" "}
-                      {(text?.totalTxt).toFixed(2)}
+                      {text?.currency} {(text?.totalTxt).toFixed(2)}
                     </span>
                   </div>
                   <div className="flex gap-1 sm:mr-12 mr-8 mt-2">
@@ -756,8 +768,7 @@ const PdfCompo = () => {
                       className="inputHoverShow text-end  "
                     />
                     <span className="w-2/4 text-end text-sm text-gray-500 mr-14">
-                      {text?.currency}{" "}
-                      {(text?.balanceDueTxt).toFixed(2)}
+                      {text?.currency} {(text?.balanceDueTxt).toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -773,6 +784,14 @@ const PdfCompo = () => {
             >
               <FiDownload size={15} />
               Download
+            </button>
+            <button
+              className="bg-white hover:bg-[#2ecc71] hover:text-white border border-[#1abc9c] p-2 rounded-lg flex items-center justify-center gap-2 text-[#1abc9c] w-full duration-300"
+              // onClick={handleDownloadPdf}
+              onClick={toggleVisible}
+            >
+              <AiOutlineSave size={15} />
+              Save
             </button>
             <hr />
             <div>
@@ -792,15 +811,15 @@ const PdfCompo = () => {
         <Footer />
       </div>
       <div
-        className={`${visible ? "hidden" : "visible"
-          } w-screen h-full p-5 pt-1 pb-2 mt-1 rounded-xl`}
+        className={`${
+          visible ? "hidden" : "visible"
+        } w-screen h-full p-5 pt-1 pb-2 mt-1 rounded-xl`}
       >
         <button onClick={toggleVisible}>
           <AiTwotoneCloseCircle size={40} />
         </button>
         <PDF text={text} file={file} list={list} />
       </div>
-
     </div>
   );
 };
