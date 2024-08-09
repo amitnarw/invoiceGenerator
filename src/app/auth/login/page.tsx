@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Login = () => {
   const handleSubmit = async (formData: FormData) => {
     "use server";
@@ -46,9 +48,12 @@ const Login = () => {
             </button>
             <div className="text-center mt-5 text-sm">
               <span>Don{"'"}t have an account yet?</span>
-              <button className="text-[#34495e] hover:text-[#2c3e50] cursor-pointer duration-300 font-medium px-2">
+              <Link
+                href={"/auth/register"}
+                className="text-[#34495e] hover:text-[#2c3e50] cursor-pointer duration-300 font-medium px-2"
+              >
                 Sign Up
-              </button>
+              </Link>
             </div>
           </form>
         </div>

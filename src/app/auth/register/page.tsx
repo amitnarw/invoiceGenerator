@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Login = () => {
   const handleSubmit = async (formData: FormData) => {
     "use server";
@@ -65,7 +67,14 @@ const Login = () => {
                 htmlFor="tac"
                 className="cursor-pointer text-sm text-gray-500"
               >
-                I agree to the Terms of Service
+                I agree to the{" "}
+                <a
+                  className="hover:text-blue-500 duration-300"
+                  href="https://www.google.co.in/"
+                  target="_blank"
+                >
+                  Terms of Service
+                </a>
               </label>
             </div>
             <button className="bg-[#3498db] hover:bg-[#2980b9] text-white w-full p-2 rounded-md mt-6 duration-300">
@@ -73,9 +82,12 @@ const Login = () => {
             </button>
             <div className="text-center mt-5 text-sm">
               <span>Already have an account?</span>
-              <button className="text-[#34495e] hover:text-[#2c3e50] cursor-pointer duration-300 font-medium px-2">
+              <Link
+                href={"/auth/login"}
+                className="text-[#34495e] hover:text-[#2c3e50] cursor-pointer duration-300 font-medium px-2"
+              >
                 Sign In
-              </button>
+              </Link>
             </div>
           </form>
         </div>
