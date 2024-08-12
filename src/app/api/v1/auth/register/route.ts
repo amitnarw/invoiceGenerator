@@ -23,7 +23,7 @@ export const POST = async (req: any, res: Response) => {
 
             let securedPassword = await encryptPassword({ password: password });
 
-            if(!securedPassword){
+            if (!securedPassword) {
                 return sendError("ERR_SERVER_ERROR", "There is an issue with encrypting the password", 500);
             }
 
@@ -34,7 +34,7 @@ export const POST = async (req: any, res: Response) => {
                 password: securedPassword
             })
 
-            if(!create){
+            if (!create) {
                 return sendError("ERR_SERVER_ERROR", "There is an issue with new user creation", 500);
             }
 
@@ -44,14 +44,13 @@ export const POST = async (req: any, res: Response) => {
             };
             let token = await generateAccessToken(payload);
 
-            if(!token){
+            if (!token) {
                 return sendError("ERR_SERVER_ERROR", "There is an issue with generating token", 500);
             }
 
             return sendSuccess(token, 200);
         }
     } catch (err) {
-        console.log(err)
         return sendError("ERR_SERVER_ERROR", "Server error, please check backend", 500);
     }
 }

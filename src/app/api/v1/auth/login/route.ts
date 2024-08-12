@@ -14,7 +14,6 @@ interface UserData {
 export const POST = async (req: any, res: Response) => {
     try {
         const { email, password } = await req.json();
-        console.log(email, password)
         if (!email || !password) {
             return sendError("ERR_MISSING_FIELDS", "Please provide both your email and password.", 400);
         }
@@ -35,7 +34,6 @@ export const POST = async (req: any, res: Response) => {
                     email: resp.email
                 };
                 let token = await generateAccessToken(payload);
-                // localStorage.setItem('token', token);
                 let response = {
                     email,
                     firstname: userData.firstname,

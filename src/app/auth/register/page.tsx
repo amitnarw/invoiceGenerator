@@ -1,15 +1,18 @@
-"use client"
+"use client";
 
+import MiniLoader from "@/app/components/MiniLoader";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Login = () => {
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
 
     const formData = new FormData(event.currentTarget);
     const firstname = formData.get("firstname") as string;
@@ -18,25 +21,30 @@ const Login = () => {
     const password = formData.get("password") as string;
 
     try {
-      const res = await fetch('/api/v1/auth/register', {
+      const res = await fetch("/api/v1/auth/register", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ firstname, lastname, email, password })
+        body: JSON.stringify({ firstname, lastname, email, password }),
       });
 
       if (!res.ok) {
         // Handle errors here
         const errorData = await res.json();
-        setError(errorData.message || "Something went wrong, please try again!");
+        setError(
+          errorData.message || "Something went wrong, please try again!"
+        );
+        setIsLoading(false);
         return;
       }
 
       let data = await res.json();
-      localStorage.setItem('token', data.result);
-      router.push('/');
+      localStorage.setItem("token", data.result);
+      setIsLoading(false);
+      router.push("/");
     } catch (error) {
+      setIsLoading(false);
       setError("Something went wrong, please try again!");
     }
   };
@@ -84,14 +92,18 @@ const Login = () => {
                 />
               </div>
             </div>
-            <p className="text-sm text-gray-500 mb-2 ml-2 sm:mt-5 mt-2">Email</p>
+            <p className="text-sm text-gray-500 mb-2 ml-2 sm:mt-5 mt-2">
+              Email
+            </p>
             <input
               name="email"
               type="text"
               className="inputNonHoverShow !text-lg"
               required
             />
-            <p className="text-sm text-gray-500 mb-2 ml-2 sm:mt-5 mt-2">Password</p>
+            <p className="text-sm text-gray-500 mb-2 ml-2 sm:mt-5 mt-2">
+              Password
+            </p>
             <input
               name="password"
               type="password"
@@ -120,18 +132,26 @@ const Login = () => {
                 </a>
               </label>
             </div>
-            <button className="bg-[#3498db] hover:bg-[#2980b9] text-white w-full p-2 rounded-md mt-6 duration-300 text-md">
-              Sign up
-            </button>
-            <div className="text-center mt-5 text-sm">
-              <span>Already have an account?</span>
-              <Link
-                href={"/auth/login"}
-                className="text-[#34495e] hover:text-[#2c3e50] cursor-pointer duration-300 font-medium px-2"
-              >
-                Sign In
-              </Link>
-            </div>
+            {isLoading ? (
+              <div className="text-center mt-10">
+                <MiniLoader />
+              </div>
+            ) : (
+              <div>
+                <button className="bg-[#3498db] hover:bg-[#2980b9] text-white w-full p-2 rounded-md mt-6 duration-300 text-md">
+                  Sign up
+                </button>
+                <div className="text-center mt-5 text-sm">
+                  <span>Already have an account?</span>
+                  <Link
+                    href={"/auth/login"}
+                    className="text-[#34495e] hover:text-[#2c3e50] cursor-pointer duration-300 font-medium px-2"
+                  >
+                    Sign In
+                  </Link>
+                </div>
+              </div>
+            )}
           </form>
         </div>
       </div>
