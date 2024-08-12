@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { FiDownload } from "react-icons/fi";
 import { HiOutlineRefresh } from "react-icons/hi";
@@ -14,6 +14,7 @@ const PdfCompo = () => {
   const inputFile: any = useRef();
 
   const [file, setFile] = useState<any>();
+  const [token, setToken] = useState<string | null>(null);
   const [text, setText] = useState<any>({
     currency: "$",
     invoice: "INVOICE",
@@ -74,6 +75,12 @@ const PdfCompo = () => {
     discount: true,
     shipping: true,
   });
+
+  useEffect(() => {
+    const storedToken =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    setToken(storedToken);
+  }, [token]);
 
   const taxOptions: any = {
     "0": { name: "No tax", value: 0 },
@@ -541,9 +548,8 @@ const PdfCompo = () => {
                 </div>
 
                 <span
-                  className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${
-                    index === 0 ? "mr-4" : "mr-[-12px]"
-                  }`}
+                  className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${index === 0 ? "mr-4" : "mr-[-12px]"
+                    }`}
                 >
                   <span className="lg:hidden inline mr-1">Amount:</span>
                   {text.currency} {item?.amountTxt}
@@ -785,14 +791,16 @@ const PdfCompo = () => {
               <FiDownload size={15} />
               Download
             </button>
-            <button
-              className="bg-white hover:bg-[#2ecc71] hover:text-white border border-[#1abc9c] p-2 rounded-lg flex items-center justify-center gap-2 text-[#1abc9c] w-full duration-300"
-              // onClick={handleDownloadPdf}
-              onClick={toggleVisible}
-            >
-              <AiOutlineSave size={15} />
-              Save
-            </button>
+            {token &&
+              <button
+                className="bg-white hover:bg-[#2ecc71] hover:text-white border border-[#1abc9c] p-2 rounded-lg flex items-center justify-center gap-2 text-[#1abc9c] w-full duration-300"
+                // onClick={handleDownloadPdf}
+                onClick={toggleVisible}
+              >
+                <AiOutlineSave size={15} />
+                Save
+              </button>
+            }
             <hr />
             <div>
               <p>Currency</p>
@@ -811,9 +819,8 @@ const PdfCompo = () => {
         <Footer />
       </div>
       <div
-        className={`${
-          visible ? "hidden" : "visible"
-        } w-screen h-full p-5 pt-1 pb-2 mt-1 rounded-xl`}
+        className={`${visible ? "hidden" : "visible"
+          } w-screen h-full p-5 pt-1 pb-2 mt-1 rounded-xl`}
       >
         <button onClick={toggleVisible}>
           <AiTwotoneCloseCircle size={40} />

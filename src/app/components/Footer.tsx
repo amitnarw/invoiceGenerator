@@ -14,7 +14,7 @@ const Footer = () => {
             height={50}
             />
         </a>
-        <a className="hover:invert cursor-pointer" href="https://play.google.com/store/games?hl=en" target="_blank">
+        <a className="hover:invert cursor-pointer border rounded-md" href="https://play.google.com/store/games?hl=en" target="_blank">
             <Image
             src="/googleStore.png"
             alt="google download"
