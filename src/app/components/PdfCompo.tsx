@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { FiDownload } from "react-icons/fi";
 import { HiOutlineRefresh } from "react-icons/hi";
@@ -9,12 +9,12 @@ import PDF from "./PDF";
 import { AiOutlineSave, AiTwotoneCloseCircle } from "react-icons/ai";
 import Footer from "./Footer";
 import Header from "./Header";
+import { useAuth } from "../context/AuthContext";
 
 const PdfCompo = () => {
   const inputFile: any = useRef();
 
   const [file, setFile] = useState<any>();
-  const [token, setToken] = useState<string | null>(null);
   const [text, setText] = useState<any>({
     currency: "$",
     invoice: "INVOICE",
@@ -75,12 +75,8 @@ const PdfCompo = () => {
     discount: true,
     shipping: true,
   });
-
-  useEffect(() => {
-    const storedToken =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    setToken(storedToken);
-  }, [token]);
+  const [error, setError] = useState("");
+  const { isAuthenticated } = useAuth();
 
   const taxOptions: any = {
     "0": { name: "No tax", value: 0 },
@@ -205,7 +201,16 @@ const PdfCompo = () => {
   };
 
   const handleSelectFile = (e: any) => {
-    setFile(URL.createObjectURL(e.target.files[0]));
+    const MAX_FILE_SIZE = 1 * 1024 * 1024; // 2MB in bytes
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        setError("File size exceeds the 1MB limit.");
+        return;
+      }
+
+      setFile(URL.createObjectURL(selectedFile));
+    }
   };
 
   const handleSelectFileClick = () => {
@@ -256,6 +261,7 @@ const PdfCompo = () => {
                     Add your logo
                   </>
                 )}
+                {error && <p style={{ color: "red" }}>{error}</p>}
               </button>
               <div className="lg:w-2/6 w-full flex flex-col gap-3 lg:items-end lg:mt-0 mt-2">
                 <input
@@ -548,8 +554,9 @@ const PdfCompo = () => {
                 </div>
 
                 <span
-                  className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${index === 0 ? "mr-4" : "mr-[-12px]"
-                    }`}
+                  className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${
+                    index === 0 ? "mr-4" : "mr-[-12px]"
+                  }`}
                 >
                   <span className="lg:hidden inline mr-1">Amount:</span>
                   {text.currency} {item?.amountTxt}
@@ -791,7 +798,7 @@ const PdfCompo = () => {
               <FiDownload size={15} />
               Download
             </button>
-            {token &&
+            {isAuthenticated && (
               <button
                 className="bg-white hover:bg-[#2ecc71] hover:text-white border border-[#1abc9c] p-2 rounded-lg flex items-center justify-center gap-2 text-[#1abc9c] w-full duration-300"
                 // onClick={handleDownloadPdf}
@@ -800,7 +807,7 @@ const PdfCompo = () => {
                 <AiOutlineSave size={15} />
                 Save
               </button>
-            }
+            )}
             <hr />
             <div>
               <p>Currency</p>
@@ -819,8 +826,9 @@ const PdfCompo = () => {
         <Footer />
       </div>
       <div
-        className={`${visible ? "hidden" : "visible"
-          } w-screen h-full p-5 pt-1 pb-2 mt-1 rounded-xl`}
+        className={`${
+          visible ? "hidden" : "visible"
+        } w-screen h-full p-5 pt-1 pb-2 mt-1 rounded-xl`}
       >
         <button onClick={toggleVisible}>
           <AiTwotoneCloseCircle size={40} />

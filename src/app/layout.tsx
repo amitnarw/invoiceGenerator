@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
+import { AuthProvider } from "./context/AuthContext";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -18,8 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={montserrat.className}>
-        <NextTopLoader showSpinner={false} />
-        {children}
+        <AuthProvider>
+          <NextTopLoader showSpinner={false} />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

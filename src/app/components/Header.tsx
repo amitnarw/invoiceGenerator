@@ -4,23 +4,25 @@ import { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { RiMenu4Fill } from "react-icons/ri";
 import MiniLoader from "./MiniLoader";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
   const [sidebar, setSidebar] = useState("");
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // const [token, setToken] = useState<string | null>(null);
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { isAuthenticated, logout, isLoading } = useAuth();
 
-  useEffect(() => {
-    const storedToken =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    setToken(storedToken);
-    setIsLoading(false);
-  }, []);
+  // useEffect(() => {
+  //   const storedToken =
+  //     typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  //   setToken(storedToken);
+  //   setIsLoading(false);
+  // }, []);
 
-  const handleLogout = () => {
-    setToken(null);
-    localStorage.clear();
-  };
+  // const handleLogout = () => {
+  //   setToken(null);
+  //   localStorage.clear();
+  // };
 
   return (
     <div className="w-full lg:px-16 px-3 text-center bg-white shadow-lg py-5 flex flex-row items-center justify-between fixed">
@@ -59,10 +61,10 @@ const Header = () => {
             </div>
           ) : (
             <li className="flex flex-col gap-4 mx-6">
-              {token !== null ? (
+              {isAuthenticated ? (
                 <button
                   className="bg-[#f39c12] hover:bg-[#d35400] px-6 py-2 rounded-lg text-white font-medium duration-300"
-                  onClick={handleLogout}
+                  onClick={logout}
                 >
                   Logout
                 </button>
@@ -99,10 +101,10 @@ const Header = () => {
           <div className="text-center">
             <MiniLoader />
           </div>
-        ) : token !== null ? (
+        ) : isAuthenticated ? (
           <button
             className="bg-[#f39c12] hover:bg-[#d35400] px-6 py-2 rounded-lg text-white font-medium duration-300"
-            onClick={handleLogout}
+            onClick={logout}
           >
             Logout
           </button>
