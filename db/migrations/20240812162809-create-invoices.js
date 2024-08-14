@@ -45,13 +45,25 @@ module.exports = {
       date: {
         type: Sequelize.STRING
       },
+      dateTxt: {
+        type: Sequelize.STRING
+      },
       paymentTerms: {
+        type: Sequelize.STRING
+      },
+      paymentTermsTxt: {
         type: Sequelize.STRING
       },
       dueDate: {
         type: Sequelize.STRING
       },
+      dueDateTxt: {
+        type: Sequelize.STRING
+      },
       poNumber: {
+        type: Sequelize.STRING
+      },
+      poNumberTxt: {
         type: Sequelize.INTEGER
       },
       item: {

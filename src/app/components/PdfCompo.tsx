@@ -76,7 +76,7 @@ const PdfCompo = () => {
     shipping: true,
   });
   const [error, setError] = useState("");
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
 
   const taxOptions: any = {
     "0": { name: "No tax", value: 0 },
@@ -228,6 +228,22 @@ const PdfCompo = () => {
       setTaxDiscountShipping({ ...taxDiscountShipping, discount: show });
     } else if (id === 3) {
       setTaxDiscountShipping({ ...taxDiscountShipping, shipping: show });
+    }
+  };
+
+  const handleSave = async () => {
+    console.log(token);
+    try {
+      let res = await fetch(`/api/v1/save`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token?.token}`,
+        },
+        body: JSON.stringify({ userId: "", data: { ...text, list } }),
+      });
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -802,7 +818,7 @@ const PdfCompo = () => {
               <button
                 className="bg-white hover:bg-[#2ecc71] hover:text-white border border-[#1abc9c] p-2 rounded-lg flex items-center justify-center gap-2 text-[#1abc9c] w-full duration-300"
                 // onClick={handleDownloadPdf}
-                onClick={toggleVisible}
+                onClick={handleSave}
               >
                 <AiOutlineSave size={15} />
                 Save

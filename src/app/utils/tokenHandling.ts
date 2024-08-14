@@ -38,7 +38,7 @@ export async function generateToken(payload: any, type: string) {
     if (type === "activation") {
         secret = process.env.ACTIVATION_TOKEN_SECRET;
         time = process.env.ACTIVATION_TOKEN_EXPIRY;
-    } else if (type === "complain"){
+    } else if (type === "complain") {
         secret = process.env.COMPLAIN_TOKEN_SECRET;
         time = process.env.COMPLAIN_TOKEN_EXPIRY;
     } else {
@@ -54,17 +54,10 @@ export async function generateToken(payload: any, type: string) {
     return jwtToken;
 }
 
-export async function checkToken(token: any, type: any) {
+export async function checkToken(token: any) {
     try {
         const { payload: jwtData } = await jose.jwtVerify(
-            token, new TextEncoder().encode(
-                type === 'refresh' ? process.env.REFRESH_TOKEN_SECRET :
-                type === 'access' ? process.env.ACCESS_TOKEN_SECRET :
-                type === 'activation' ? process.env.ACTIVATION_TOKEN_SECRET :
-                type === 'forget' ? process.env.RESET_PASSWORD_TOKEN_SECRET :
-                type === 'complain' ? process.env.COMPLAIN_TOKEN_SECRET :
-                'Invalid type'
-            )
+            token, new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET)
         );
 
         return { data: jwtData, success: true };
