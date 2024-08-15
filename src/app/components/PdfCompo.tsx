@@ -76,6 +76,7 @@ const PdfCompo = () => {
     shipping: true,
   });
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
   const { isAuthenticated, token } = useAuth();
 
   const taxOptions: any = {
@@ -208,7 +209,7 @@ const PdfCompo = () => {
         setError("File size exceeds the 1MB limit.");
         return;
       }
-
+      setSaving(false);
       setFile(URL.createObjectURL(selectedFile));
     }
   };
@@ -232,16 +233,18 @@ const PdfCompo = () => {
   };
 
   const handleSave = async () => {
-    console.log(token);
+    setSaving(true);
     try {
       let res = await fetch(`/api/v1/save`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token?.token}`,
+          Authorization: `Bearer ${localStorage.getItem("nexinvoice-token")}`,
         },
-        body: JSON.stringify({ userId: "", data: { ...text, list } }),
+        body: JSON.stringify({ data: { ...text, list } }),
       });
+
+      setSaving(false);
     } catch (err) {
       console.error(err);
     }
@@ -312,7 +315,6 @@ const PdfCompo = () => {
                     name="whoIsThisFrom"
                     placeholder="Who is this from?"
                     className="inputNonHoverShow"
-                    // style={{ width: "70%" }}
                     cols={40}
                     value={text.whoIsThisFrom}
                     onChange={handleText}

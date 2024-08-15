@@ -26,19 +26,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("nexinvoice-token");
     setIsAuthenticated(!!token);
     setIsLoading(false);
   }, []);
 
   const login = (token: any) => {
-    localStorage.setItem("token", token);
+    localStorage.setItem("nexinvoice-token", token);
     setToken(token);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("nexinvoice-token");
     setIsAuthenticated(false);
   };
 

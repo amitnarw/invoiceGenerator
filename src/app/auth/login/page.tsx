@@ -30,7 +30,6 @@ const Login = () => {
       });
 
       if (!res.ok) {
-        // Handle errors here
         const errorData = await res.json();
         setError(
           errorData.message || "Something went wrong, please try again!"
@@ -40,8 +39,7 @@ const Login = () => {
       }
 
       let data = await res.json();
-      login(data.result);
-      // localStorage.setItem("token", data.result);
+      login(data.result.token);
       setIsLoading(false);
       router.push("/");
     } catch (error) {

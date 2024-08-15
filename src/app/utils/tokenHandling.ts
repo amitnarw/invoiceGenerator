@@ -1,5 +1,3 @@
-// import jwt from 'jsonwebtoken';
-// import User from '../../models/user';
 import * as jose from 'jose';
 
 export async function generateAccessToken(payload: any) {
@@ -55,6 +53,7 @@ export async function generateToken(payload: any, type: string) {
 }
 
 export async function checkToken(token: any) {
+    console.log(token)
     try {
         const { payload: jwtData } = await jose.jwtVerify(
             token, new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET)
@@ -62,7 +61,6 @@ export async function checkToken(token: any) {
 
         return { data: jwtData, success: true };
     } catch (error: unknown) {
-        // Asserting that error is of type Error
         if (typeof error === 'object' && error !== null && 'name' in error) {
             const errorName = (error as Error).name;
             if (errorName.includes('JWTExpired')) {

@@ -1,6 +1,7 @@
 "use client";
 
 import MiniLoader from "@/app/components/MiniLoader";
+import { useAuth } from "@/app/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,6 +10,7 @@ const Login = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -40,7 +42,7 @@ const Login = () => {
       }
 
       let data = await res.json();
-      localStorage.setItem("token", data.result);
+      login(data.result.token);
       setIsLoading(false);
       router.push("/");
     } catch (error) {
