@@ -53,7 +53,6 @@ export async function generateToken(payload: any, type: string) {
 }
 
 export async function checkToken(token: any) {
-    console.log(token)
     try {
         const { payload: jwtData } = await jose.jwtVerify(
             token, new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET)

@@ -10,6 +10,8 @@ import { AiOutlineSave, AiTwotoneCloseCircle } from "react-icons/ai";
 import Footer from "./Footer";
 import Header from "./Header";
 import { useAuth } from "../context/AuthContext";
+import MiniLoader from "./MiniLoader";
+import { toastifyError, toastifySuccess } from "./Toastify";
 
 const PdfCompo = () => {
   const inputFile: any = useRef();
@@ -62,7 +64,7 @@ const PdfCompo = () => {
   const [list, setList] = useState<any>([
     {
       itemTxt: "",
-      HSNTxt: "",
+      HSNTxt: 0,
       taxDropTxt: { type: 0, value: 0 },
       quantityTxt: 1,
       rateTxt: 0,
@@ -77,7 +79,7 @@ const PdfCompo = () => {
   });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const { isAuthenticated, token } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const taxOptions: any = {
     "0": { name: "No tax", value: 0 },
@@ -243,9 +245,16 @@ const PdfCompo = () => {
         },
         body: JSON.stringify({ data: { ...text, list } }),
       });
-
+      let data = await res.json();
+      if (data?.success) {
+        toastifySuccess("Invoice saved successfully");
+      } else {
+        toastifyError("Error while saving invoice");
+      }
       setSaving(false);
     } catch (err) {
+      setSaving(false);
+      toastifyError("Error while saving invoice");
       console.error(err);
     }
   };
@@ -816,7 +825,11 @@ const PdfCompo = () => {
               <FiDownload size={15} />
               Download
             </button>
-            {isAuthenticated && (
+            {isAuthenticated && saving ? (
+              <div className="w-full text-center">
+                <MiniLoader />
+              </div>
+            ) : (
               <button
                 className="bg-white hover:bg-[#2ecc71] hover:text-white border border-[#1abc9c] p-2 rounded-lg flex items-center justify-center gap-2 text-[#1abc9c] w-full duration-300"
                 // onClick={handleDownloadPdf}

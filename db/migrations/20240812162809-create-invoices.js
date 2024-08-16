@@ -70,7 +70,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       HSN: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       tax: {
         type: Sequelize.STRING

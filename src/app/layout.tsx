@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { AuthProvider } from "./context/AuthContext";
+import ToastProvider from "./components/ToasterProvider";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body className={montserrat.className}>
         <AuthProvider>
           <NextTopLoader showSpinner={false} />
+          <ToastProvider />
           {children}
         </AuthProvider>
       </body>
