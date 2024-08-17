@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { BiSolidImageAdd } from "react-icons/bi";
 import { FiDownload } from "react-icons/fi";
 import { HiOutlineRefresh } from "react-icons/hi";
-import { IoMdAdd, IoMdClose } from "react-icons/io";
+import { IoIosArrowDown, IoMdAdd, IoMdClose } from "react-icons/io";
 import PDF from "./PDF";
 import { AiOutlineSave, AiTwotoneCloseCircle } from "react-icons/ai";
 import Footer from "./Footer";
@@ -12,6 +12,8 @@ import Header from "./Header";
 import { useAuth } from "../context/AuthContext";
 import MiniLoader from "./MiniLoader";
 import { toastifyError, toastifySuccess } from "./Toastify";
+import Modal from "./Modal";
+import ErrorModal from "./ErrorModal";
 
 const PdfCompo = () => {
   const inputFile: any = useRef();
@@ -77,8 +79,14 @@ const PdfCompo = () => {
     discount: true,
     shipping: true,
   });
-  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [modal, setModal] = useState({
+    show: false,
+    title: "",
+    key: ""
+  });
+  const [isLoading, setIsLoading] = useState(0);
+  const [error, setError] = useState("");
   const { isAuthenticated } = useAuth();
 
   const taxOptions: any = {
@@ -241,7 +249,7 @@ const PdfCompo = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("nexinvoice-token")}`,
+          "Authorization": `Bearer ${localStorage.getItem("nexinvoice-token")}`,
         },
         body: JSON.stringify({ data: { ...text, list } }),
       });
@@ -258,6 +266,37 @@ const PdfCompo = () => {
       console.error(err);
     }
   };
+
+  const handleModalValues = (show: boolean, title: string, key: string) => {
+    setModal({ show, title, key });
+  }
+
+  const handleSaveSingle = async (name: string, type: number, index?: any) => {
+    setIsLoading(type);
+    if (name === "itemTxt" ? list[index].itemTxt : text[name]) {
+      let res = await fetch(`/api/v1/singleSaves/post`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("nexinvoice-token")}`,
+        },
+        body: JSON.stringify({
+          name,
+          value: name === "itemTxt" ? list[index].itemTxt : text[name]
+        })
+      });
+      let data = await res.json();
+      if(data.success){
+        toastifySuccess('Data added successfully');
+      } else {
+        toastifyError('Error while saving data');
+      }
+      setIsLoading(0);
+    } else {
+      setIsLoading(0);
+      setError((name == "whoIsThisFrom" ? "Who is this from" : (name === "itemTxt" ? "Item" : text[name])) + " is empty");
+    }
+  }
 
   return (
     <div className="flex flex-col w-full">
@@ -289,7 +328,7 @@ const PdfCompo = () => {
                     Add your logo
                   </>
                 )}
-                {error && <p style={{ color: "red" }}>{error}</p>}
+
               </button>
               <div className="lg:w-2/6 w-full flex flex-col gap-3 lg:items-end lg:mt-0 mt-2">
                 <input
@@ -319,7 +358,7 @@ const PdfCompo = () => {
             </div>
             <div className="flex mt-4 lg:flex-row flex-col gap-6">
               <div className="lg:w-3/5 w-full">
-                <div className="lg:w-3/5 w-full">
+                <div className="lg:w-3/5 w-full flex flex-row gap-1">
                   <textarea
                     name="whoIsThisFrom"
                     placeholder="Who is this from?"
@@ -328,23 +367,64 @@ const PdfCompo = () => {
                     value={text.whoIsThisFrom}
                     onChange={handleText}
                   ></textarea>
+                  <div className="flex flex-col gap-1">
+                    <button className="p-2 rounded-lg bg-[#3498db]/20 hover:bg-[#216EB4]/50 text-[#216EB4] duration-300"
+                      onClick={() => handleModalValues(true, "Who is this for", "whoIsThisFrom")}
+                    >
+                      <IoIosArrowDown />
+                    </button>
+                    {isLoading === 1 ?
+                      <div className="w-full text-center">
+                        <MiniLoader size={6} />
+                      </div>
+                      :
+                      <button className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
+                        onClick={() => handleSaveSingle("whoIsThisFrom", 1)}
+                      >
+                        <AiOutlineSave />
+                      </button>
+                    }
+                  </div>
                 </div>
                 <div className="flex mt-2 lg:gap-4 gap-2 lg:flex-row flex-col">
                   <div className="w-full flex flex-col gap-1">
-                    <input
-                      name="billTo"
-                      type="text"
-                      value={text.billTo}
-                      onChange={handleText}
-                      className="inputHoverShow"
-                    />
-                    <textarea
-                      name="whoIsThisTo"
-                      placeholder="Who is this to?"
-                      value={text.whoIsThisTo}
-                      onChange={handleText}
-                      className="inputNonHoverShow"
-                    ></textarea>
+                    <div className="flex gap-1">
+                      <input
+                        name="billTo"
+                        type="text"
+                        value={text.billTo}
+                        onChange={handleText}
+                        className="inputHoverShow"
+                      />
+
+                    </div>
+                    <div className="flex gap-1">
+                      <textarea
+                        name="whoIsThisTo"
+                        placeholder="Who is this to?"
+                        value={text.whoIsThisTo}
+                        onChange={handleText}
+                        className="inputNonHoverShow"
+                      ></textarea>
+                      <div className="flex flex-col gap-1">
+                        <button className="p-2 rounded-lg bg-[#3498db]/20 hover:bg-[#216EB4]/50 text-[#216EB4] duration-300"
+                          onClick={() => handleModalValues(true, "Bill to", "whoIsThisTo")}
+                        >
+                          <IoIosArrowDown />
+                        </button>
+                        {isLoading === 2 ?
+                          <div className="flex h-full items-center">
+                            <MiniLoader size={6} />
+                          </div>
+                          :
+                          <button className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
+                            onClick={() => handleSaveSingle("whoIsThisTo", 2)}
+                          >
+                            <AiOutlineSave />
+                          </button>
+                        }
+                      </div>
+                    </div>
                   </div>
                   <div className="w-full flex flex-col gap-1">
                     <input
@@ -354,13 +434,33 @@ const PdfCompo = () => {
                       onChange={handleText}
                       className="inputHoverShow"
                     />
-                    <textarea
-                      name="shipToOptional"
-                      placeholder="(optional)"
-                      value={text.shipToOptional}
-                      onChange={handleText}
-                      className="inputNonHoverShow"
-                    ></textarea>
+                    <div className="flex gap-1">
+                      <textarea
+                        name="shipToOptional"
+                        placeholder="(optional)"
+                        value={text.shipToOptional}
+                        onChange={handleText}
+                        className="inputNonHoverShow"
+                      ></textarea>
+                      <div className="flex flex-col gap-1">
+                        <button className="p-2 rounded-lg bg-[#3498db]/20 hover:bg-[#216EB4]/50 text-[#216EB4] duration-300"
+                          onClick={() => handleModalValues(true, "Ship to", "shipToOptional")}
+                        >
+                          <IoIosArrowDown />
+                        </button>
+                        {isLoading === 3 ?
+                          <div className="flex h-full items-center">
+                            <MiniLoader size={6} />
+                          </div>
+                          :
+                          <button className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
+                            onClick={() => handleSaveSingle("shipToOptional", 3)}
+                          >
+                            <AiOutlineSave />
+                          </button>
+                        }
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -489,7 +589,7 @@ const PdfCompo = () => {
                   type="text"
                   value={text.quantity}
                   onChange={handleText}
-                  className="inputHoverShowWhite w-3/5 text-center !px-0 !pl-3 !text-left"
+                  className="inputHoverShowWhite w-3/5 text-center !px-0 !pl-1 !text-left"
                 />
                 <input
                   name="rate"
@@ -515,6 +615,22 @@ const PdfCompo = () => {
                 key={index}
               >
                 <div className="flex gap-1 w-full lg:order-1 order-3">
+                <button className="p-2 rounded-lg bg-[#3498db]/20 hover:bg-[#216EB4]/50 text-[#216EB4] duration-300"
+                  onClick={() => handleModalValues(true, "Items", "itemTxt")}
+                >
+                  <IoIosArrowDown />
+                </button>
+                {isLoading === 4 ?
+                  <div className="flex h-full items-center">
+                    <MiniLoader size={6} />
+                  </div>
+                  :
+                  <button className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
+                    onClick={() => handleSaveSingle("itemTxt", 4, index)}
+                  >
+                    <AiOutlineSave />
+                  </button>
+                }
                   <input
                     name="itemTxt"
                     type="text"
@@ -581,9 +697,8 @@ const PdfCompo = () => {
                 </div>
 
                 <span
-                  className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${
-                    index === 0 ? "mr-4" : "mr-[-12px]"
-                  }`}
+                  className={`sm:w-2/12 w-full flex items-center lg:justify-center justify-start text-gray-500 text-sm lg:order-3 order-1 ${index === 0 ? "mr-4" : "mr-[-12px]"
+                    }`}
                 >
                   <span className="lg:hidden inline mr-1">Amount:</span>
                   {text.currency} {item?.amountTxt}
@@ -609,7 +724,7 @@ const PdfCompo = () => {
               </div>
             ))}
 
-            <div className="mt-2">
+            <div className="mt-2 flex gap-1">
               <button
                 className="text-[#16a085] text-sm flex items-center gap-2 px-4 py-2 border border-[#16a085] rounded-md hover:bg-[#16a085] hover:text-white duration-300"
                 onClick={handleArrayAdd}
@@ -617,6 +732,24 @@ const PdfCompo = () => {
                 <IoMdAdd size={16} />
                 Line item
               </button>
+              {/* <div className="flex gap-1">
+                <button className="p-2 rounded-lg bg-[#3498db]/20 hover:bg-[#216EB4]/50 text-[#216EB4] duration-300"
+                  onClick={() => handleModalValues(true, "Items", "item")}
+                >
+                  <IoIosArrowDown />
+                </button>
+                {isLoading === 4 ?
+                  <div className="flex h-full items-center">
+                    <MiniLoader size={6} />
+                  </div>
+                  :
+                  <button className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
+                    onClick={() => handleSaveSingle("item", 4)}
+                  >
+                    <AiOutlineSave />
+                  </button>
+                }
+              </div> */}
             </div>
 
             <div className="flex gap-4 mt-8 lg:flex-row flex-col">
@@ -825,20 +958,21 @@ const PdfCompo = () => {
               <FiDownload size={15} />
               Download
             </button>
-            {isAuthenticated && saving ? (
-              <div className="w-full text-center">
-                <MiniLoader />
-              </div>
-            ) : (
-              <button
-                className="bg-white hover:bg-[#2ecc71] hover:text-white border border-[#1abc9c] p-2 rounded-lg flex items-center justify-center gap-2 text-[#1abc9c] w-full duration-300"
-                // onClick={handleDownloadPdf}
-                onClick={handleSave}
-              >
-                <AiOutlineSave size={15} />
-                Save
-              </button>
-            )}
+            {isAuthenticated ?
+              saving ?
+                <div className="w-full text-center">
+                  <MiniLoader />
+                </div>
+                :
+                <button
+                  className="bg-white hover:bg-[#2ecc71] hover:text-white border border-[#1abc9c] p-2 rounded-lg flex items-center justify-center gap-2 text-[#1abc9c] w-full duration-300"
+                  onClick={handleSave}
+                >
+                  <AiOutlineSave size={15} />
+                  Save
+                </button>
+              :
+              ""}
             <hr />
             <div>
               <p>Currency</p>
@@ -857,15 +991,22 @@ const PdfCompo = () => {
         <Footer />
       </div>
       <div
-        className={`${
-          visible ? "hidden" : "visible"
-        } w-screen h-full p-5 pt-1 pb-2 mt-1 rounded-xl`}
+        className={`${visible ? "hidden" : "visible"
+          } w-screen h-full p-5 pt-1 pb-2 mt-1 rounded-xl`}
       >
         <button onClick={toggleVisible}>
           <AiTwotoneCloseCircle size={40} />
         </button>
-        <PDF text={text} file={file} list={list} />
+        {!visible &&
+          <PDF text={text} file={file} list={list} />
+        }
       </div>
+      {modal?.show &&
+        <Modal modal={modal} handleModalValues={handleModalValues} />
+      }
+      {error !== "" &&
+        <ErrorModal error={error} setError={setError} />
+      }
     </div>
   );
 };

@@ -99,31 +99,6 @@ input{
   box-shadow: 0px 1px 50px #0000001a;
 }
 
-/* .inputOut{
-    border: 1px solid #d5dbe2;
-    border-radius: 5px;
-    outline: none;
-    resize: none;
-}
-
-.inputOut:focus{
-  box-shadow: 0px 1px 20px #0000001a;
-  transition: 0.3s;
-}
-
-input{
-  padding: 5px 10px;
-  background-color: transparent;
-}
-
-input:focus{
-  box-shadow: 0px 1px 50px #0000001a;
-  transition: 0.3s;
-  border: 1px solid #d5dbe2;
-  border-radius: 5px;
-} */
- 
-
 
 @layer utilities {
   .text-balance {
