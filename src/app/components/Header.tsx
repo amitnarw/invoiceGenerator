@@ -62,12 +62,20 @@ const Header = () => {
           ) : (
             <li className="flex flex-col gap-4 mx-6">
               {isAuthenticated ? (
+                <>
+                {/* <select
+                className="p-2 rounded-lg outline-none bg-white border-[1px] border-[#d5dbe2] cursor-pointer"
+                >
+                  <option>invoice1</option>
+                  <option>invoice2</option>
+                </select> */}
                 <button
                   className="bg-[#f39c12] hover:bg-[#d35400] px-6 py-2 rounded-lg text-white font-medium duration-300"
                   onClick={logout}
-                >
+                  >
                   Logout
                 </button>
+                  </>
               ) : (
                 <>
                   <Link

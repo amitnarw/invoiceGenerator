@@ -125,7 +125,6 @@ export const POST = async (req: any, res: Response) => {
             return sendError("ERR_INVALID_TOKEN", "Token is invalid.", 404);
         }
     } catch (err) {
-        console.log(err)
         return sendError("ERR_SERVER_ERROR", "Server error, please check backend", 400);
     }
 }

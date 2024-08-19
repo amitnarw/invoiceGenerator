@@ -17,7 +17,6 @@ export const POST = async (req: any) => {
                     key
                 }
             });
-            console.log(check, key, resp, 'check')
             return sendSuccess(resp, 200);
         } else {
             return sendError("ERR_INVALID_TOKEN", "Token is invalid.", 404);
