@@ -14,6 +14,8 @@ interface AuthContextProps {
   logout: () => void;
   isLoading: boolean;
   token: any;
+  showSavedInvoices: boolean;
+  setShowSavedInvoices: any;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -24,6 +26,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [token, setToken] = useState<any>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showSavedInvoices, setShowSavedInvoices] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("nexinvoice-token");
@@ -44,7 +47,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, isLoading, token }}
+      value={{
+        isAuthenticated,
+        login,
+        logout,
+        isLoading,
+        token,
+        showSavedInvoices,
+        setShowSavedInvoices,
+      }}
     >
       {children}
     </AuthContext.Provider>

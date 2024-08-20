@@ -10,7 +10,8 @@ const Header = () => {
   const [sidebar, setSidebar] = useState("");
   // const [token, setToken] = useState<string | null>(null);
   // const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { isAuthenticated, logout, isLoading } = useAuth();
+  const { isAuthenticated, logout, isLoading, setShowSavedInvoices } =
+    useAuth();
 
   // useEffect(() => {
   //   const storedToken =
@@ -63,19 +64,22 @@ const Header = () => {
             <li className="flex flex-col gap-4 mx-6">
               {isAuthenticated ? (
                 <>
-                {/* <select
+                  {/* <select
                 className="p-2 rounded-lg outline-none bg-white border-[1px] border-[#d5dbe2] cursor-pointer"
                 >
                   <option>invoice1</option>
                   <option>invoice2</option>
                 </select> */}
-                <button
-                  className="bg-[#f39c12] hover:bg-[#d35400] px-6 py-2 rounded-lg text-white font-medium duration-300"
-                  onClick={logout}
+                  <button className="bg-[#9b59b6] hover:bg-[#8e44ad] px-6 py-2 rounded-lg text-white font-medium duration-300">
+                    Saved invoices
+                  </button>
+                  <button
+                    className="bg-[#f39c12] hover:bg-[#d35400] px-6 py-2 rounded-lg text-white font-medium duration-300"
+                    onClick={logout}
                   >
-                  Logout
-                </button>
-                  </>
+                    Logout
+                  </button>
+                </>
               ) : (
                 <>
                   <Link
@@ -110,12 +114,20 @@ const Header = () => {
             <MiniLoader />
           </div>
         ) : isAuthenticated ? (
-          <button
-            className="bg-[#f39c12] hover:bg-[#d35400] px-6 py-2 rounded-lg text-white font-medium duration-300"
-            onClick={logout}
-          >
-            Logout
-          </button>
+          <>
+            <button
+              className="bg-[#9b59b6] hover:bg-[#8e44ad] px-6 py-2 rounded-lg text-white font-medium duration-300"
+              onClick={() => setShowSavedInvoices(true)}
+            >
+              Saved invoices
+            </button>
+            <button
+              className="bg-[#f39c12] hover:bg-[#d35400] px-6 py-2 rounded-lg text-white font-medium duration-300"
+              onClick={logout}
+            >
+              Logout
+            </button>
+          </>
         ) : (
           <>
             <Link
