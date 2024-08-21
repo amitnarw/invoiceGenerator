@@ -91,8 +91,8 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
           <ul>
             {data?.map((item: any, index: number) => (
               <li className="w-full flex items-center gap-2 mt-1.5" key={index}>
-                <p className="w-full cursor-pointer hover:bg-gray-200 rounded-lg text-center p-1 duration-300">
-                  {index + 1}. {item?.invoiceTxt}
+                <p className="w-full cursor-pointer hover:bg-gray-200 rounded-lg p-1 duration-300">
+                  {index + 1}. {item?.invoice} {item?.whoIsThisFrom} {item?.billToTxt} {item?.billToTxt} {item?.itemTxt}
                 </p>
 
                 {isSaving ? (

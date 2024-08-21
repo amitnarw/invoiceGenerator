@@ -246,6 +246,7 @@ const PdfCompo = () => {
   };
 
   const handleSave = async () => {
+    console.log({ ...text, list }, "CHECK");
     setSaving(true);
     try {
       let res = await fetch(`/api/v1/save`, {

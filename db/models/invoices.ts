@@ -12,7 +12,7 @@ class invoices extends Model {
   declare shipTo: string;
   declare shipToTxt: string;
   declare placeOfSupply: string;
-  declare invoiceTxt: string;
+  declare invoice: string;
   declare page: string;
   declare pageSymbol: string;
   declare date: string;
@@ -71,7 +71,7 @@ invoices.init({
   billTo: {
     type: DataTypes.STRING,
   },
-  billToTxt: {
+  whoIsThisTo: {
     type: DataTypes.STRING,
   },
   shipTo: {
@@ -83,7 +83,7 @@ invoices.init({
   placeOfSupply: {
     type: DataTypes.STRING,
   },
-  invoiceTxt: {
+  invoice: {
     type: DataTypes.STRING,
   },
   page: {

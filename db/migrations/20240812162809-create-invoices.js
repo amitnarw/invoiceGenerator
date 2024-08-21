@@ -22,7 +22,7 @@ module.exports = {
       billTo: {
         type: Sequelize.STRING
       },
-      billToTxt: {
+      whoIsThisTo: {
         type: Sequelize.STRING
       },
       shipTo: {
@@ -34,7 +34,7 @@ module.exports = {
       placeOfSupply: {
         type: Sequelize.STRING
       },
-      invoiceTxt: {
+      invoice: {
         type: Sequelize.STRING
       },
       page: {
