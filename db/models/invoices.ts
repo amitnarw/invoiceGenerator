@@ -122,24 +122,6 @@ invoices.init({
   amount: {
     type: DataTypes.STRING,
   },
-  itemTxt: {
-    type: DataTypes.STRING,
-  },
-  HSNTxt: {
-    type: DataTypes.STRING,
-  },
-  taxTxt: {
-    type: DataTypes.STRING,
-  },
-  quantityTxt: {
-    type: DataTypes.STRING,
-  },
-  rateTxt: {
-    type: DataTypes.STRING,
-  },
-  amountTxt: {
-    type: DataTypes.STRING,
-  },
   paymentDetails: {
     type: DataTypes.STRING,
   },

@@ -85,24 +85,6 @@ module.exports = {
       amount: {
         type: Sequelize.STRING
       },
-      itemTxt: {
-        type: Sequelize.STRING
-      },
-      HSNTxt: {
-        type: Sequelize.STRING
-      },
-      taxTxt: {
-        type: Sequelize.STRING
-      },
-      quantityTxt: {
-        type: Sequelize.STRING
-      },
-      rateTxt: {
-        type: Sequelize.STRING
-      },
-      amountTxt: {
-        type: Sequelize.STRING
-      },
       paymentDetails: {
         type: Sequelize.STRING
       },

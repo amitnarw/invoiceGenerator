@@ -1,13 +1,17 @@
 import { sendSuccess, sendError } from '@/app/utils/responseHandling';
-import { users } from '../../../../../db/models';
-import invoices from '../../../../../db/models/invoices';
+import { users } from '../../../../../../db/models';
+import invoices from '../../../../../../db/models/invoices';
 import { checkToken } from '@/app/utils/tokenHandling';
+import invoiceitems from '../../../../../../db/models/invoiceitems';
+import sequelize from '../../../../../../db/dbConnect';
 
 
 export const POST = async (req: any, res: Response) => {
     try {
         const { data } = await req.json();
         const headers = await req.headers.get('Authorization').split("Bearer ")[1];
+        console.log(data)
+
         if (!data) {
             return sendError("ERR_MISSING_FIELDS", "Please provide data.", 400);
         }
@@ -18,6 +22,7 @@ export const POST = async (req: any, res: Response) => {
                     id: check?.data?.id
                 }
             });
+            const transaction = await sequelize.transaction();
             if (resp) {
                 let { logo,
                     whoIsThisFrom,
@@ -43,12 +48,6 @@ export const POST = async (req: any, res: Response) => {
                     quantity,
                     rate,
                     amount,
-                    itemTxt,
-                    HSNTxt,
-                    taxTxt,
-                    quantityTxt,
-                    rateTxt,
-                    amountTxt,
                     paymentDetails,
                     paymentDetailsTxt,
                     terms,
@@ -67,7 +66,7 @@ export const POST = async (req: any, res: Response) => {
                     balanceDue,
                     balanceDueTxt, } = data;
 
-                await invoices.create({
+                let resp = await invoices.create({
                     userId: check?.data?.id,
                     logo,
                     whoIsThisFrom,
@@ -93,12 +92,6 @@ export const POST = async (req: any, res: Response) => {
                     quantity,
                     rate,
                     amount,
-                    itemTxt,
-                    HSNTxt,
-                    taxTxt,
-                    quantityTxt,
-                    rateTxt,
-                    amountTxt,
                     paymentDetails,
                     paymentDetailsTxt,
                     terms,
@@ -116,9 +109,16 @@ export const POST = async (req: any, res: Response) => {
                     amountPaidTxt,
                     balanceDue,
                     balanceDueTxt,
-                })
+                },
+                    { transaction })
+                if (resp) {
+                    await invoiceitems.bulkCreate(data?.list,
+                        { transaction })
+                }
+                await transaction.commit();
                 return sendSuccess("Invoice saved", 200);
             } else {
+                await transaction.rollback();
                 return sendError("ERR_USER_NOT_FOUND", "Email not found. Please register and try again.", 404);
             }
         } else {

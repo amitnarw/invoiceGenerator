@@ -249,7 +249,7 @@ const PdfCompo = () => {
     console.log({ ...text, list }, "CHECK");
     setSaving(true);
     try {
-      let res = await fetch(`/api/v1/save`, {
+      let res = await fetch(`/api/v1/invoice/save`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
