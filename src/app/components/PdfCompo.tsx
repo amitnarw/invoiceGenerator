@@ -24,11 +24,12 @@ const PdfCompo = () => {
     currency: "₹",
     invoice: "INVOICE",
     page: 1,
+    pageSymbol: "#",
     whoIsThisFrom: "",
     billTo: "Bill To",
     whoIsThisTo: "",
     shipTo: "Ship To",
-    shipToOptional: "",
+    shipToTxt: "",
     placeOfSupply: "",
     date: "Date",
     dateTxt: "",
@@ -378,14 +379,21 @@ const PdfCompo = () => {
                     padding: "0px 15px",
                   }}
                 />
-                <div className="lg:w-2/4 w-1/4 min-w-[100px] flex items-center gap-1 pl-4 border-[1px] border-[#d5dbe2] rounded-md">
-                  <span className="text-gray-500 text-sm">#</span>
+                <div className="lg:w-2/4 w-1/4 min-w-[100px] flex items-center gap-1 border-[1px] border-[#d5dbe2] rounded-md">
+                  {/* <span className="text-gray-500 text-sm">#</span> */}
+                  <input
+                    name="pageSymbol"
+                    type="text"
+                    value={text.pageSymbol}
+                    onChange={handleText}
+                    className="w-3/12 h-full text-sm outline-none text-gray-500 rounded-sm duration-300 border-transparent bg-transparent focus:shadow-lg lg:text-end text-end"
+                  />
                   <input
                     name="page"
                     type="number"
                     value={text.page}
                     onChange={handleText}
-                    className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg lg:text-end text-start"
+                    className="w-9/12 text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg lg:text-end text-start"
                   />
                 </div>
               </div>
@@ -485,9 +493,9 @@ const PdfCompo = () => {
                     />
                     <div className="flex gap-1">
                       <textarea
-                        name="shipToOptional"
+                        name="shipToTxt"
                         placeholder="(optional)"
-                        value={text.shipToOptional}
+                        value={text.shipToTxt}
                         onChange={handleText}
                         className="inputNonHoverShow"
                       ></textarea>
@@ -496,11 +504,7 @@ const PdfCompo = () => {
                           <button
                             className="p-2 rounded-lg bg-[#3498db]/20 hover:bg-[#216EB4]/50 text-[#216EB4] duration-300"
                             onClick={() =>
-                              handleModalValues(
-                                true,
-                                "Ship to",
-                                "shipToOptional"
-                              )
+                              handleModalValues(true, "Ship to", "shipToTxt")
                             }
                           >
                             <IoIosArrowDown />
@@ -512,9 +516,7 @@ const PdfCompo = () => {
                           ) : (
                             <button
                               className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
-                              onClick={() =>
-                                handleSaveSingle("shipToOptional", 3)
-                              }
+                              onClick={() => handleSaveSingle("shipToTxt", 3)}
                             >
                               <AiOutlineSave />
                             </button>

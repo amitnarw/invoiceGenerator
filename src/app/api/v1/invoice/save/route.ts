@@ -27,7 +27,7 @@ export const POST = async (req: any, res: Response) => {
                 let { logo,
                     whoIsThisFrom,
                     billTo,
-                    billToTxt,
+                    whoIsThisTo,
                     shipTo,
                     shipToTxt,
                     placeOfSupply,
@@ -71,7 +71,7 @@ export const POST = async (req: any, res: Response) => {
                     logo,
                     whoIsThisFrom,
                     billTo,
-                    billToTxt,
+                    whoIsThisTo,
                     shipTo,
                     shipToTxt,
                     placeOfSupply,
@@ -112,7 +112,12 @@ export const POST = async (req: any, res: Response) => {
                 },
                     { transaction })
                 if (resp) {
-                    await invoiceitems.bulkCreate(data?.list,
+                    let newData = {
+                        userId: check?.data?.id,
+                        invoiceId: resp.id,
+                        ...data?.list
+                    }
+                    await invoiceitems.bulkCreate(newData,
                         { transaction })
                 }
                 await transaction.commit();
@@ -125,6 +130,7 @@ export const POST = async (req: any, res: Response) => {
             return sendError("ERR_INVALID_TOKEN", "Token is invalid.", 404);
         }
     } catch (err) {
+        console.log(err)
         return sendError("ERR_SERVER_ERROR", "Server error, please check backend", 400);
     }
 }
