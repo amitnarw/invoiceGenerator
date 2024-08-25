@@ -15,6 +15,7 @@ import { toastifyError, toastifySuccess } from "./Toastify";
 import Modal from "./Modal";
 import ErrorModal from "./ErrorModal";
 import SavedInvoices from "./SavedInvoices";
+import Image from "next/image";
 
 const PdfCompo = () => {
   const inputFile: any = useRef();
@@ -216,6 +217,7 @@ const PdfCompo = () => {
   };
 
   const handleSelectFile = (e: any) => {
+    console.log(typeof e.target.files?.[0], "PPPPPPPPPp")
     const MAX_FILE_SIZE = 1 * 1024 * 1024;
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
@@ -357,12 +359,14 @@ const PdfCompo = () => {
                 onClick={handleSelectFileClick}
               >
                 {file ? (
-                  <img
-                    src={URL.createObjectURL(file)}
+                  <Image
+                    src={typeof file === "string" ? file : URL.createObjectURL(file)}
                     // src={file}
                     alt="logo"
+                    height={200}
+                    width={200}
                     className="object-cover w-[12vw] h-[7vw] min-w-[180px] min-h-[100px] rounded-md"
-                  ></img>
+                  ></Image>
                 ) : (
                   <>
                     <BiSolidImageAdd />
@@ -1089,7 +1093,7 @@ const PdfCompo = () => {
         />
       )}
       {error !== "" && <ErrorModal error={error} setError={setError} />}
-      {showSavedInvoices && <SavedInvoices setText={setText} setList={setList} />}
+      {showSavedInvoices && <SavedInvoices setText={setText} setList={setList} setFile={setFile} />}
     </div>
   );
 };

@@ -73,8 +73,16 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
     fetchData();
   };
 
+  const closeModal = (e: any) => {
+    if (e.target === e.currentTarget) {
+      handleModalValues(false, "")
+    }
+  }
+
   return (
-    <div className="bg-black/40 fixed inset-0 h-screen w-full flex items-center justify-center">
+    <div className="bg-black/40 fixed inset-0 h-screen w-full flex items-center justify-center"
+    onClick={closeModal}
+    >
       <div className="bg-white rounded-xl w-96 p-3 max-h-[70vh] overflow-y-auto">
         <div className="w-full flex items-center justify-between mb-2 ">
           <p>{title}</p>

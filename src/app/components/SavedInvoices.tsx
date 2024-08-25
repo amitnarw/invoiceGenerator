@@ -8,7 +8,7 @@ import { AiOutlineSave } from "react-icons/ai";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
 
-const Modal = ({ setText, setList }: any) => {
+const Modal = ({ setText, setList, setFile }: any) => {
   const { isAuthenticated, setShowSavedInvoices } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -28,6 +28,7 @@ const Modal = ({ setText, setList }: any) => {
       });
       let data = await res.json();
       setData(data?.result);
+      console.log(data?.result)
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -71,8 +72,21 @@ const Modal = ({ setText, setList }: any) => {
     fetchData();
   };
 
+  const handleSelect = (index: number) => {
+    setText(data[index]);
+    setList(data[index]?.invoiceitems);
+    setFile(data[index]?.logo);
+  }
+
+  const closeModal = (e: any) => {
+    if (e.target === e.currentTarget) {
+      setShowSavedInvoices(false);
+    }
+  }
+
   return (
-    <div className="bg-black/40 fixed inset-0 h-screen w-full flex items-center justify-center">
+    <div className="bg-black/40 fixed inset-0 h-screen w-full flex items-center justify-center"
+      onClick={closeModal}>
       <div className="bg-white rounded-xl w-[80vw] p-3 max-h-[70vh] overflow-y-auto">
         <div className="w-full flex items-center justify-between mb-2 ">
           <p>Saved Invoices</p>
@@ -103,7 +117,10 @@ const Modal = ({ setText, setList }: any) => {
             {data?.map((item: any, index: number) => (
               <li className="w-full flex flex-row items-center gap-2 mt-1.5 border rounded-lg" key={index}>
                 <div className="w-full cursor-pointer hover:bg-gray-200 rounded-lg p-1 duration-300 flex gap-2 items-center lg:flex-row flex-col"
-                  onClick={() => setShowSavedInvoices(false)}
+                  onClick={() => {
+                    setShowSavedInvoices(false);
+                    handleSelect(index);
+                  }}
                 >
                   <div className="lg:w-3/12 w-full flex flex-row items-center">
                     <span className="w-[30px]">
