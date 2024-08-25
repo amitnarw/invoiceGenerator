@@ -16,21 +16,19 @@ class invoices extends Model {
   declare page: string;
   declare pageSymbol: string;
   declare date: string;
+  declare dateTxt: string;
   declare paymentTerms: string;
+  declare paymentTermsTxt: string;
   declare dueDate: string;
+  declare dueDateTxt: string;
   declare poNumber: string;
+  declare poNumberTxt: string;
   declare item: string;
   declare HSN: string;
-  declare tax: string;
+  declare taxDrop: string;
   declare quantity: string;
   declare rate: string;
   declare amount: string;
-  declare itemTxt: string;
-  declare HSNTxt: string;
-  declare taxTxt: string;
-  declare quantityTxt: string;
-  declare rateTxt: string;
-  declare amountTxt: string;
   declare paymentDetails: string;
   declare paymentDetailsTxt: string;
   declare terms: string;
@@ -39,7 +37,7 @@ class invoices extends Model {
   declare subtotalTxt: string;
   declare discount: string;
   declare discountTxt: string;
-  declare discountSymbol: string;
+  declare discountType: string;
   declare shipping: string;
   declare shippingTxt: string;
   declare total: string;
@@ -63,6 +61,9 @@ invoices.init({
     allowNull: false,
   },
   logo: {
+    type: DataTypes.STRING,
+  },
+  currency: {
     type: DataTypes.STRING,
   },
   whoIsThisFrom: {
@@ -95,13 +96,25 @@ invoices.init({
   date: {
     type: DataTypes.STRING,
   },
+  dateTxt: {
+    type: DataTypes.STRING,
+  },
   paymentTerms: {
+    type: DataTypes.STRING,
+  },
+  paymentTermsTxt: {
     type: DataTypes.STRING,
   },
   dueDate: {
     type: DataTypes.STRING,
   },
+  dueDateTxt: {
+    type: DataTypes.STRING,
+  },
   poNumber: {
+    type: DataTypes.INTEGER,
+  },
+  poNumberTxt: {
     type: DataTypes.INTEGER,
   },
   item: {
@@ -110,7 +123,7 @@ invoices.init({
   HSN: {
     type: DataTypes.STRING,
   },
-  tax: {
+  taxDrop: {
     type: DataTypes.STRING,
   },
   quantity: {
@@ -146,7 +159,7 @@ invoices.init({
   discountTxt: {
     type: DataTypes.INTEGER,
   },
-  discountSymbol: {
+  discountType: {
     type: DataTypes.STRING,
   },
   shipping: {

@@ -1,6 +1,5 @@
 import { sendSuccess, sendError } from '@/app/utils/responseHandling';
-import { users } from '../../../../../../db/models';
-import invoices from '../../../../../../db/models/invoices';
+import { users, invoices } from '../../../../../../db/models';
 import { checkToken } from '@/app/utils/tokenHandling';
 
 

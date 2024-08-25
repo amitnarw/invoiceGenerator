@@ -45,8 +45,8 @@ const PdfCompo = () => {
     quantity: "Quantity",
     rate: "Rate",
     amount: "Amount",
-    notes: "Payment details",
-    notesTxt: "",
+    paymentDetails: "Payment details",
+    paymentDetailsTxt: "",
     terms: "Terms",
     termsTxt: "",
     subtotal: "Subtotal",
@@ -216,7 +216,7 @@ const PdfCompo = () => {
   };
 
   const handleSelectFile = (e: any) => {
-    const MAX_FILE_SIZE = 1 * 1024 * 1024; // 2MB in bytes
+    const MAX_FILE_SIZE = 1 * 1024 * 1024;
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       if (selectedFile.size > MAX_FILE_SIZE) {
@@ -224,7 +224,8 @@ const PdfCompo = () => {
         return;
       }
       setSaving(false);
-      setFile(URL.createObjectURL(selectedFile));
+      // setFile(URL.createObjectURL(selectedFile));
+      setFile(selectedFile);
     }
   };
 
@@ -247,16 +248,19 @@ const PdfCompo = () => {
   };
 
   const handleSave = async () => {
-    console.log({ ...text, list }, "CHECK");
     setSaving(true);
     try {
+      const formData = new FormData();
+      if(file){
+        formData.append("logo", file);
+      }
+      formData.append("body", JSON.stringify({ ...text, list }));
       let res = await fetch(`/api/v1/invoice/save`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("nexinvoice-token")}`,
         },
-        body: JSON.stringify({ data: { ...text, list } }),
+        body: formData,
       });
       let data = await res.json();
       if (data?.success) {
@@ -338,7 +342,7 @@ const PdfCompo = () => {
     <div className="flex flex-col w-full">
       <div className={`${visible ? "visible" : "hidden"}`}>
         <Header />
-        <div className="w-full flex lg:px-16 px-3 lg:gap-10 gap-4 mt-10 lg:flex-row flex-col mb-10 mt-32">
+        <div className="w-full flex lg:px-16 px-3 lg:gap-10 gap-4 lg:flex-row flex-col mb-10 sm:mt-24 mt-[70px]">
           <div className="bg-white h-full lg:w-5/6 w-full rounded-xl sm:p-5 p-2">
             <div className="flex justify-between lg:flex-row flex-col">
               <input
@@ -354,7 +358,8 @@ const PdfCompo = () => {
               >
                 {file ? (
                   <img
-                    src={file}
+                    src={URL.createObjectURL(file)}
+                    // src={file}
                     alt="logo"
                     className="object-cover w-[12vw] h-[7vw] min-w-[180px] min-h-[100px] rounded-md"
                   ></img>
@@ -827,16 +832,16 @@ const PdfCompo = () => {
             <div className="flex gap-4 mt-8 lg:flex-row flex-col">
               <div className="lg:w-1/2 w-full flex flex-col gap-1">
                 <input
-                  name="notes"
+                  name="paymentDetails"
                   type="text"
-                  value={text.notes}
+                  value={text.paymentDetails}
                   onChange={handleText}
                   className="inputHoverShow"
                 />
                 <textarea
-                  name="notesTxt"
+                  name="paymentDetailsTxt"
                   placeholder="Details - any relevant information not already covered"
-                  value={text.notesTxt}
+                  value={text.paymentDetailsTxt}
                   onChange={handleText}
                   className="inputNonHoverShow"
                 ></textarea>
@@ -922,7 +927,7 @@ const PdfCompo = () => {
                           onChange={handleText}
                           className="w-full text-sm outline-none rounded-sm duration-300 px-3 py-2 border-transparent bg-transparent focus:shadow-lg text-start"
                         />
-                        <span className="text-gray-500 text-sm mr-1">
+                        <span className="text-gray-500 text-sm mr-1 px-1">
                           {/* {text.shippingType === 1 ? "%" : text?.currency} */}
                           {text?.currency}
                         </span>
@@ -1084,7 +1089,7 @@ const PdfCompo = () => {
         />
       )}
       {error !== "" && <ErrorModal error={error} setError={setError} />}
-      {showSavedInvoices && <SavedInvoices />}
+      {showSavedInvoices && <SavedInvoices setText={setText} setList={setList} />}
     </div>
   );
 };

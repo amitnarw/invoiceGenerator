@@ -1,18 +1,20 @@
+import fs from 'fs';
+import { pipeline } from 'stream';
+import { promisify } from 'util';
 import { sendSuccess, sendError } from '@/app/utils/responseHandling';
-import { users } from '../../../../../../db/models';
-import invoices from '../../../../../../db/models/invoices';
 import { checkToken } from '@/app/utils/tokenHandling';
-import invoiceitems from '../../../../../../db/models/invoiceitems';
+import { users, invoices, invoiceitems } from '../../../../../../db/models';
 import sequelize from '../../../../../../db/dbConnect';
+const pump = promisify(pipeline);
 
 
 export const POST = async (req: any, res: Response) => {
     try {
-        const { data } = await req.json();
+        const formData = await req.formData();
+        const logo = formData.getAll('logo')[0];
+        const body = JSON.parse(formData.getAll('body')[0]);
         const headers = await req.headers.get('Authorization').split("Bearer ")[1];
-        console.log(data)
-
-        if (!data) {
+        if (!body) {
             return sendError("ERR_MISSING_FIELDS", "Please provide data.", 400);
         }
         let check: any = await checkToken(headers);
@@ -23,8 +25,20 @@ export const POST = async (req: any, res: Response) => {
                 }
             });
             const transaction = await sequelize.transaction();
+
+            let filePath; 
+            let filePath2; 
+
+            if(logo){
+                let newURL = logo ? `${new Date().getMilliseconds().toString()}-${logo.name}` : "";
+                filePath = `./uploads/${newURL}`;
+                filePath2 = `/uploads/${newURL}`;
+                await pump(logo.stream(), fs.createWriteStream(filePath));
+            }
+
             if (resp) {
-                let { logo,
+                let {
+                    currency,
                     whoIsThisFrom,
                     billTo,
                     whoIsThisTo,
@@ -37,14 +51,14 @@ export const POST = async (req: any, res: Response) => {
                     date,
                     dateTxt,
                     paymentTerms,
-                    paymenTermsTxt,
+                    paymentTermsTxt,
                     dueDate,
                     dueDateTxt,
                     poNumber,
                     poNumberTxt,
                     item,
                     HSN,
-                    tax,
+                    taxDrop,
                     quantity,
                     rate,
                     amount,
@@ -56,7 +70,7 @@ export const POST = async (req: any, res: Response) => {
                     subtotalTxt,
                     discount,
                     discountTxt,
-                    discountSymbol,
+                    discountType,
                     shipping,
                     shippingTxt,
                     total,
@@ -64,11 +78,12 @@ export const POST = async (req: any, res: Response) => {
                     amountPaid,
                     amountPaidTxt,
                     balanceDue,
-                    balanceDueTxt, } = data;
+                    balanceDueTxt, } = body;
 
                 let resp = await invoices.create({
                     userId: check?.data?.id,
-                    logo,
+                    logo: filePath2,
+                    currency,
                     whoIsThisFrom,
                     billTo,
                     whoIsThisTo,
@@ -81,14 +96,14 @@ export const POST = async (req: any, res: Response) => {
                     date,
                     dateTxt,
                     paymentTerms,
-                    paymenTermsTxt,
+                    paymentTermsTxt,
                     dueDate,
                     dueDateTxt,
                     poNumber,
                     poNumberTxt,
                     item,
                     HSN,
-                    tax,
+                    taxDrop,
                     quantity,
                     rate,
                     amount,
@@ -100,7 +115,7 @@ export const POST = async (req: any, res: Response) => {
                     subtotalTxt,
                     discount,
                     discountTxt,
-                    discountSymbol,
+                    discountType,
                     shipping,
                     shippingTxt,
                     total,
@@ -112,13 +127,20 @@ export const POST = async (req: any, res: Response) => {
                 },
                     { transaction })
                 if (resp) {
-                    let newData = {
-                        userId: check?.data?.id,
-                        invoiceId: resp.id,
-                        ...data?.list
-                    }
-                    await invoiceitems.bulkCreate(newData,
-                        { transaction })
+                    let newList = body?.list.map((item: any)=>{
+                        return {
+                            userId : check?.data?.id,
+                            invoiceId: resp?.id,
+                            itemTxt: item?.itemTxt,
+                            HSNTxt: Number(item?.HSNTxt),
+                            taxTxt: item?.taxDropTxt?.name,
+                            quantityTxt: Number(item?.quantityTxt),
+                            rateTxt: Number(item?.rateTxt),
+                            amountTxt: Number(item?.amountTxt)
+                        }
+                    });
+                    await invoiceitems.bulkCreate(newList,
+                        { transaction });
                 }
                 await transaction.commit();
                 return sendSuccess("Invoice saved", 200);

@@ -1,6 +1,5 @@
 import { sendSuccess, sendError } from '@/app/utils/responseHandling';
-import { users } from '../../../../../../db/models';
-import invoices from '../../../../../../db/models/invoices';
+import { users, invoices, invoiceitems } from '../../../../../../db/models';
 import { checkToken } from '@/app/utils/tokenHandling';
 
 
@@ -18,7 +17,8 @@ export const GET = async (req: any, res: Response) => {
                 let resp2 = await invoices.findAll({
                     where: {
                         userId: check?.data?.id
-                    }
+                    },
+                    include: [invoiceitems]
                 });
                 return sendSuccess(resp2, 200);
             } else {

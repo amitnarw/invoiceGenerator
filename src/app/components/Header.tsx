@@ -26,13 +26,13 @@ const Header = () => {
   // };
 
   return (
-    <div className="w-full lg:px-16 px-3 text-center bg-white shadow-lg py-5 flex flex-row items-center justify-between fixed">
-      <div className="w-full flex justify-start">
+    <div className="w-full lg:px-16 px-1 py-2 text-center bg-white shadow-lg flex flex-row items-center justify-between fixed">
+      <div className="sm:w-full w-auto flex justify-start">
         <button
-          className="rounded-full p-5 hover:bg-gray-200 duration-300 lg:hidden"
+          className="rounded-full sm:p-5 p-3 hover:bg-gray-200 duration-300 lg:hidden sm:text-2xl text-lg"
           onClick={() => setSidebar(sidebar === "showNav" ? "" : "showNav")}
         >
-          <RiMenu4Fill size={25} />
+          <RiMenu4Fill  />
         </button>
       </div>
       <nav
@@ -101,10 +101,10 @@ const Header = () => {
         </ul>
       </nav>
       <div className="w-full">
-        <h1 className="font-semibold sm:text-4xl text-xl lg:text-center text-start">
+        <h1 className="font-semibold sm:text-3xl text-lg lg:text-center text-start">
           NEXINVOICE
         </h1>
-        <p className="sm:text-xl text-sm text-gray-500 lg:text-center text-start">
+        <p className="sm:text-lg text-xs text-gray-500 lg:text-center text-start">
           Your Website for Invoice
         </p>
       </div>

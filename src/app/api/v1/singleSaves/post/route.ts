@@ -1,5 +1,5 @@
 import { sendError, sendSuccess } from "@/app/utils/responseHandling";
-import singlesaves from "../../../../../../db/models/singlesaves";
+import { singlesaves } from '../../../../../../db/models';
 import { checkToken } from "@/app/utils/tokenHandling";
 
 export const POST = async (req: any) => {

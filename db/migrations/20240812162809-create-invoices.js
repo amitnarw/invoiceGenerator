@@ -16,6 +16,9 @@ module.exports = {
       logo: {
         type: Sequelize.STRING
       },
+      currency: {
+        type: Sequelize.STRING
+      },
       whoIsThisFrom: {
         type: Sequelize.STRING
       },
@@ -65,7 +68,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       poNumberTxt: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       item: {
         type: Sequelize.STRING
@@ -73,7 +76,7 @@ module.exports = {
       HSN: {
         type: Sequelize.STRING
       },
-      tax: {
+      taxDrop: {
         type: Sequelize.STRING
       },
       quantity: {
@@ -109,7 +112,7 @@ module.exports = {
       discountTxt: {
         type: Sequelize.INTEGER
       },
-      discountSymbol: {
+      discountType: {
         type: Sequelize.STRING
       },
       shipping: {

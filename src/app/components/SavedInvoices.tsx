@@ -5,8 +5,10 @@ import { useAuth } from "../context/AuthContext";
 import MiniLoader from "./MiniLoader";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { AiOutlineSave } from "react-icons/ai";
+import Image from "next/image";
+import { CiImageOff } from "react-icons/ci";
 
-const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
+const Modal = ({ setText, setList }: any) => {
   const { isAuthenticated, setShowSavedInvoices } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -37,7 +39,7 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
 
   const handleDelete = async (id: number) => {
     setIsSaving(true);
-    await fetch(`/api/v1/singleSaves/delete`, {
+    await fetch(`/api/v1/invoice/delete`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -69,8 +71,6 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
     fetchData();
   };
 
-  console.log(data, data?.length);
-
   return (
     <div className="bg-black/40 fixed inset-0 h-screen w-full flex items-center justify-center">
       <div className="bg-white rounded-xl w-[80vw] p-3 max-h-[70vh] overflow-y-auto">
@@ -88,43 +88,63 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
             <MiniLoader />
           </div>
         ) : data?.length > 0 ? (
-          <ul>
+          <ul className="flex flex-col lg:gap-0 gap-5">
+            <div className="w-full flex gap-2 text-gray-500 text-sm lg:flex hidden">
+              <div className="w-3/12 flex flex-row items-center">
+                <span className="w-[30px]">S.N</span>
+                <span className="w-4/12 text-center">Logo</span>
+                <span className="w-8/12">Invoice name</span>
+              </div>
+              <div className="w-9/12 flex flex-row items-center mr-10">
+                <span className="w-1/2">From</span>
+                <span className="w-1/2">To</span>
+              </div>
+            </div>
             {data?.map((item: any, index: number) => (
-              <li className="w-full flex items-center gap-2 mt-1.5" key={index}>
-                <p className="w-full cursor-pointer hover:bg-gray-200 rounded-lg p-1 duration-300">
-                  {index + 1}. {item?.invoice} {item?.whoIsThisFrom} {item?.billToTxt} {item?.billToTxt} {item?.itemTxt}
-                </p>
+              <li className="w-full flex flex-row items-center gap-2 mt-1.5 border rounded-lg" key={index}>
+                <div className="w-full cursor-pointer hover:bg-gray-200 rounded-lg p-1 duration-300 flex gap-2 items-center lg:flex-row flex-col"
+                  onClick={() => setShowSavedInvoices(false)}
+                >
+                  <div className="lg:w-3/12 w-full flex flex-row items-center">
+                    <span className="w-[30px]">
+                      {index + 1}.
+                    </span>
+                    <div className="lg:w-4/12 sm:w-2/12 w-4/12">
 
-                {isSaving ? (
-                  <MiniLoader />
-                ) : (
-                  <>
-                    {editNumber === index ? (
-                      <button
-                        className="p-2 rounded-lg bg-black/20 hover:bg-black/50 text-<IoIosCloseCircle /> duration-300"
-                        onClick={() => setEditNumber("")}
-                      >
-                        <IoIosCloseCircle />
-                      </button>
-                    ) : (
-                      <button
-                        className="bg-blue-100 hover:bg-blue-200 text-blue-500 rounded-md p-2 duration-300"
-                        onClick={() => {
-                          setEditNumber(index);
-                          setEditValue(item?.value);
-                        }}
-                      >
-                        <MdEdit />
-                      </button>
-                    )}
-                    <button
-                      className="bg-red-100 hover:bg-red-200 text-red-500 rounded-md p-2 duration-300"
-                      onClick={() => handleDelete(item?.id)}
-                    >
-                      <MdDelete />
-                    </button>
-                  </>
-                )}
+                      {item?.logo ?
+                        <Image
+                          src={item?.logo}
+                          alt="logo"
+                          height={200}
+                          width={200}
+                          className="rounded-md w-14 h-14 object-cover m-auto"
+                        />
+                        :
+                        <CiImageOff className="rounded-md text-gray-200 w-14 h-14 object-cover" />
+                      }
+                    </div>
+
+                    <span className="lg:w-8/12 sm:w-10/12 w-8/12">
+                      {item?.invoice || ""}
+                    </span>
+                  </div>
+                  <div className="lg:w-9/12 w-full flex flex-row items-center">
+                    <span className="w-1/2">
+                      {item?.whoIsThisFrom || ""}
+                    </span>
+                    <span className="w-1/2">
+                      {item?.whoIsThisTo || ""}
+                    </span>
+                  </div>
+
+                </div>
+
+                <button
+                  className="bg-red-100 hover:bg-red-200 text-red-500 rounded-md p-2 duration-300"
+                  onClick={() => handleDelete(item?.id)}
+                >
+                  <MdDelete />
+                </button>
               </li>
             ))}
           </ul>
