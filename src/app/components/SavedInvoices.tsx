@@ -28,7 +28,7 @@ const Modal = ({ setText, setList, setFile }: any) => {
       });
       let data = await res.json();
       setData(data?.result);
-      console.log(data?.result)
+      console.log(data?.result);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -76,17 +76,19 @@ const Modal = ({ setText, setList, setFile }: any) => {
     setText(data[index]);
     setList(data[index]?.invoiceitems);
     setFile(data[index]?.logo);
-  }
+  };
 
   const closeModal = (e: any) => {
     if (e.target === e.currentTarget) {
       setShowSavedInvoices(false);
     }
-  }
+  };
 
   return (
-    <div className="bg-black/40 fixed inset-0 h-screen w-full flex items-center justify-center"
-      onClick={closeModal}>
+    <div
+      className="bg-black/40 fixed inset-0 h-screen w-full flex items-center justify-center"
+      onClick={closeModal}
+    >
       <div className="bg-white rounded-xl w-[80vw] p-3 max-h-[70vh] overflow-y-auto">
         <div className="w-full flex items-center justify-between mb-2 ">
           <p>Saved Invoices</p>
@@ -115,20 +117,21 @@ const Modal = ({ setText, setList, setFile }: any) => {
               </div>
             </div>
             {data?.map((item: any, index: number) => (
-              <li className="w-full flex flex-row items-center gap-2 mt-1.5 border rounded-lg" key={index}>
-                <div className="w-full cursor-pointer hover:bg-gray-200 rounded-lg p-1 duration-300 flex gap-2 items-center lg:flex-row flex-col"
+              <li
+                className="w-full flex flex-row items-center gap-2 mt-1.5 border rounded-lg"
+                key={index}
+              >
+                <div
+                  className="w-full cursor-pointer hover:bg-gray-200 rounded-lg p-1 duration-300 flex gap-2 items-center lg:flex-row flex-col"
                   onClick={() => {
                     setShowSavedInvoices(false);
                     handleSelect(index);
                   }}
                 >
                   <div className="lg:w-3/12 w-full flex flex-row items-center">
-                    <span className="w-[30px]">
-                      {index + 1}.
-                    </span>
+                    <span className="w-[30px]">{index + 1}.</span>
                     <div className="lg:w-4/12 sm:w-2/12 w-4/12">
-
-                      {item?.logo ?
+                      {item?.logo ? (
                         <Image
                           src={item?.logo}
                           alt="logo"
@@ -136,9 +139,9 @@ const Modal = ({ setText, setList, setFile }: any) => {
                           width={200}
                           className="rounded-md w-14 h-14 object-cover m-auto"
                         />
-                        :
-                        <CiImageOff className="rounded-md text-gray-200 w-14 h-14 object-cover" />
-                      }
+                      ) : (
+                        <CiImageOff className="rounded-md text-gray-200 w-14 h-14 object-cover m-auto" />
+                      )}
                     </div>
 
                     <span className="lg:w-8/12 sm:w-10/12 w-8/12">
@@ -146,14 +149,9 @@ const Modal = ({ setText, setList, setFile }: any) => {
                     </span>
                   </div>
                   <div className="lg:w-9/12 w-full flex flex-row items-center">
-                    <span className="w-1/2">
-                      {item?.whoIsThisFrom || ""}
-                    </span>
-                    <span className="w-1/2">
-                      {item?.whoIsThisTo || ""}
-                    </span>
+                    <span className="w-1/2">{item?.whoIsThisFrom || ""}</span>
+                    <span className="w-1/2">{item?.whoIsThisTo || ""}</span>
                   </div>
-
                 </div>
 
                 <button
