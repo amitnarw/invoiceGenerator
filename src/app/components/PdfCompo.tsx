@@ -218,7 +218,6 @@ const PdfCompo = () => {
   };
 
   const handleSelectFile = (e: any) => {
-    console.log(typeof e.target.files?.[0], "PPPPPPPPPp");
     const MAX_FILE_SIZE = 1 * 1024 * 1024;
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {

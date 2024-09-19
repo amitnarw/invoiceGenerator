@@ -26,10 +26,10 @@ export const POST = async (req: any, res: Response) => {
             });
             const transaction = await sequelize.transaction();
 
-            let filePath; 
-            let filePath2; 
+            let filePath;
+            let filePath2;
 
-            if(logo){
+            if (logo) {
                 let newURL = logo ? `${new Date().getMilliseconds().toString()}-${logo.name}` : "";
                 filePath = `./uploads/${newURL}`;
                 filePath2 = `/uploads/${newURL}`;
@@ -127,13 +127,13 @@ export const POST = async (req: any, res: Response) => {
                 },
                     { transaction })
                 if (resp) {
-                    let newList = body?.list.map((item: any)=>{
+                    let newList = body?.list.map((item: any) => {
                         return {
-                            userId : check?.data?.id,
+                            userId: check?.data?.id,
                             invoiceId: resp?.id,
                             itemTxt: item?.itemTxt,
                             HSNTxt: Number(item?.HSNTxt),
-                            taxTxt: item?.taxDropTxt?.name,
+                            taxDropTxt: JSON.stringify(item?.taxDropTxt),
                             quantityTxt: Number(item?.quantityTxt),
                             rateTxt: Number(item?.rateTxt),
                             amountTxt: Number(item?.amountTxt)

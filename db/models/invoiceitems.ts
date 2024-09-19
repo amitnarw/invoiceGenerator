@@ -36,7 +36,7 @@ invoiceitems.init({
   HSNTxt: {
     type: DataTypes.STRING,
   },
-  taxTxt: {
+  taxDropTxt: {
     type: DataTypes.STRING,
   },
   quantityTxt: {

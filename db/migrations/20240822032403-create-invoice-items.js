@@ -25,7 +25,7 @@ module.exports = {
       HSNTxt: {
         type: Sequelize.STRING
       },
-      taxTxt: {
+      taxDropTxt: {
         type: Sequelize.STRING
       },
       quantityTxt: {
