@@ -32,7 +32,7 @@ const Header = () => {
           className="rounded-full sm:p-5 p-3 hover:bg-gray-200 duration-300 lg:hidden sm:text-2xl text-lg"
           onClick={() => setSidebar(sidebar === "showNav" ? "" : "showNav")}
         >
-          <RiMenu4Fill  />
+          <RiMenu4Fill />
         </button>
       </div>
       <nav
@@ -70,7 +70,13 @@ const Header = () => {
                   <option>invoice1</option>
                   <option>invoice2</option>
                 </select> */}
-                  <button className="bg-[#9b59b6] hover:bg-[#8e44ad] px-6 py-2 rounded-lg text-white font-medium duration-300">
+                  <button
+                    className="bg-[#9b59b6] hover:bg-[#8e44ad] px-6 py-2 rounded-lg text-white font-medium duration-300"
+                    onClick={() => {
+                      setShowSavedInvoices(true);
+                      setSidebar("");
+                    }}
+                  >
                     Saved invoices
                   </button>
                   <button

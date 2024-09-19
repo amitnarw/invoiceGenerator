@@ -16,6 +16,7 @@ import Modal from "./Modal";
 import ErrorModal from "./ErrorModal";
 import SavedInvoices from "./SavedInvoices";
 import Image from "next/image";
+import HowTo from "./HowTo";
 
 const PdfCompo = () => {
   const inputFile: any = useRef();
@@ -217,7 +218,7 @@ const PdfCompo = () => {
   };
 
   const handleSelectFile = (e: any) => {
-    console.log(typeof e.target.files?.[0], "PPPPPPPPPp")
+    console.log(typeof e.target.files?.[0], "PPPPPPPPPp");
     const MAX_FILE_SIZE = 1 * 1024 * 1024;
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
@@ -253,7 +254,7 @@ const PdfCompo = () => {
     setSaving(true);
     try {
       const formData = new FormData();
-      if(file){
+      if (file) {
         formData.append("logo", file);
       }
       formData.append("body", JSON.stringify({ ...text, list }));
@@ -360,7 +361,11 @@ const PdfCompo = () => {
               >
                 {file ? (
                   <Image
-                    src={typeof file === "string" ? file : URL.createObjectURL(file)}
+                    src={
+                      typeof file === "string"
+                        ? file
+                        : URL.createObjectURL(file)
+                    }
                     // src={file}
                     alt="logo"
                     height={200}
@@ -1071,6 +1076,7 @@ const PdfCompo = () => {
             </div>
           </div>
         </div>
+        <HowTo />
         <Footer />
       </div>
       <div
@@ -1093,7 +1099,9 @@ const PdfCompo = () => {
         />
       )}
       {error !== "" && <ErrorModal error={error} setError={setError} />}
-      {showSavedInvoices && <SavedInvoices setText={setText} setList={setList} setFile={setFile} />}
+      {showSavedInvoices && (
+        <SavedInvoices setText={setText} setList={setList} setFile={setFile} />
+      )}
     </div>
   );
 };
