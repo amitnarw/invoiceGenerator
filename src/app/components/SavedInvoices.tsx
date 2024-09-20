@@ -28,7 +28,6 @@ const Modal = ({ setText, setList, setFile }: any) => {
       });
       let data = await res.json();
       setData(data?.result);
-      console.log(data?.result);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -74,89 +73,18 @@ const Modal = ({ setText, setList, setFile }: any) => {
 
   const handleSelect = (index: number) => {
     setText(data[index]);
-    setList(data[index]?.invoiceitems);
+    // setList(data[index]?.invoiceitems);
     setFile(data[index]?.logo);
-    // let num = data[index]?.invoiceitems?.taxTxt;
-    // let list = [
-    //   {
-    //     name: "SGST + CGST (5%)",
-    //     total: 0,
-    //     type: 1,
-    //     value: 5,
-    //   },
-    //   {
-    //     name: "SGST + CGST (12%)",
-    //     total: 0,
-    //     type: 2,
-    //     value: 12,
-    //   },
-    //   {
-    //     name: "SGST + CGST (18%)",
-    //     total: 0,
-    //     type: 3,
-    //     value: 18,
-    //   },
-    //   {
-    //     name: "SGST + CGST (28%)",
-    //     total: 0,
-    //     type: 4,
-    //     value: 28,
-    //   },
-    //   {
-    //     name: "IGST (5%)",
-    //     total: 0,
-    //     type: 5,
-    //     value: 5,
-    //   },
-    //   {
-    //     name: "IGST (12%)",
-    //     total: 0,
-    //     type: 6,
-    //     value: 12,
-    //   },
-    //   {
-    //     name: "IGST (18%)",
-    //     total: 0,
-    //     type: 7,
-    //     value: 18,
-    //   },
-    //   {
-    //     name: "IGST (28%)",
-    //     total: 0,
-    //     type: 8,
-    //     value: 28,
-    //   },
-    //   {
-    //     name: "UTGST + CGST (5%)",
-    //     total: 0,
-    //     type: 9,
-    //     value: 5,
-    //   },
-    //   {
-    //     name: "UTGST + CGST (12%)",
-    //     total: 0,
-    //     type: 10,
-    //     value: 12,
-    //   },
-    //   {
-    //     name: "UTGST + CGST (18%)",
-    //     total: 0,
-    //     type: 11,
-    //     value: 18,
-    //   },
-    //   {
-    //     name: "UTGST + CGST (28%)",
-    //     total: 0,
-    //     type: 12,
-    //     value: 28,
-    //   },
-    // ];
 
-    // let name = num == 0 ?  : num == 1 ? SGST + CGST (12%)
-    // let taxDropTxt = { name: "", total: "", type: "", value: "" };
-    // data[index]?.invoiceitems?.taxTxt == 0 ?
+    const parsedData = data[index]?.invoiceitems?.map((item: any) => {
+      const parsedTaxDrop = JSON.parse(item.taxDropTxt);
+      return {
+        ...item,
+        taxDropTxt: parsedTaxDrop,
+      };
+    });
 
-    // console.log(data[index]?.invoiceitems, "pplpp");
+    setList(parsedData);
   };
 
   const closeModal = (e: any) => {

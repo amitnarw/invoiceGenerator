@@ -31,8 +31,8 @@ export const POST = async (req: any, res: Response) => {
 
             if (logo) {
                 let newURL = logo ? `${new Date().getMilliseconds().toString()}-${logo.name}` : "";
-                filePath = `./uploads/${newURL}`;
-                filePath2 = `/uploads/${newURL}`;
+                filePath = `./public/uploads/${newURL}`;
+                filePath2 = `/public/uploads/${newURL}`;
                 await pump(logo.stream(), fs.createWriteStream(filePath));
             }
 
@@ -82,7 +82,7 @@ export const POST = async (req: any, res: Response) => {
 
                 let resp = await invoices.create({
                     userId: check?.data?.id,
-                    logo: filePath2,
+                    logo: filePath2?.split("/public")[1],
                     currency,
                     whoIsThisFrom,
                     billTo,
