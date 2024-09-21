@@ -12,9 +12,10 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [data, setData] = useState<any>([]);
   const [editNumber, setEditNumber] = useState<any>();
-  const [editValue, setEditValue] = useState("");
+  const [editValue, setEditValue] = useState<any>();
 
   const { show, title, key } = modal;
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -55,7 +56,7 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
     fetchData();
   };
 
-  const handleEdit = async (id: number, e: any) => {
+  const handleEdit = async (id: number, e: any, key: string) => {
     setIsSaving(true);
     await fetch(`/api/v1/singleSaves/update`, {
       method: "POST",
@@ -65,7 +66,7 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
       },
       body: JSON.stringify({
         id,
-        value: editValue,
+        value: key === "itemTxt" ? JSON.stringify(editValue) : editValue,
       }),
     });
     setIsSaving(false);
@@ -75,13 +76,14 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
 
   const closeModal = (e: any) => {
     if (e.target === e.currentTarget) {
-      handleModalValues(false, "")
+      handleModalValues(false, "");
     }
-  }
+  };
 
   return (
-    <div className="bg-black/40 fixed inset-0 h-screen w-full flex items-center justify-center"
-    onClick={closeModal}
+    <div
+      className="bg-black/40 fixed inset-0 h-screen w-full flex items-center justify-center"
+      onClick={closeModal}
     >
       <div className="bg-white rounded-xl w-96 p-3 max-h-[70vh] overflow-y-auto">
         <div className="w-full flex items-center justify-between mb-2 ">
@@ -99,68 +101,95 @@ const Modal = ({ modal, handleModalValues, handlePClick }: any) => {
           </div>
         ) : data?.length > 0 ? (
           <ul>
-            {data?.map((item: any, index: number) => (
-              <li className="w-full flex items-center gap-2 mt-1.5" key={index}>
-                {editNumber === index ? (
-                  <input
-                    type="text"
-                    placeholder="Value"
-                    name="value"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    className="inputNonHoverShow text-center"
-                  />
-                ) : (
-                  <p
-                    className="w-full cursor-pointer hover:bg-gray-200 rounded-lg text-center p-1 duration-300"
-                    onClick={() => {
-                      handlePClick(key, item?.value, index);
-                      handleModalValues(false, "");
-                    }}
+            {data?.map(
+              (item: any, index: number) => (
+                (
+                  <li
+                    className="w-full flex items-center gap-2 mt-1.5"
+                    key={index}
                   >
-                    {item?.value}
-                  </p>
-                )}
-                {isSaving ? (
-                  <MiniLoader />
-                ) : (
-                  <>
                     {editNumber === index ? (
-                      <>
-                        <button
-                          className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
-                          onClick={(e) => handleEdit(item?.id, e)}
-                        >
-                          <AiOutlineSave />
-                        </button>
-                        <button
-                          className="p-2 rounded-lg bg-black/20 hover:bg-black/50 text-<IoIosCloseCircle /> duration-300"
-                          onClick={() => setEditNumber("")}
-                        >
-                          <IoIosCloseCircle />
-                        </button>
-                      </>
+                      <div className={`flex ${item?.key === "itemTxt" ? "flex-col gap-2 " : "flex-col"}`}>
+                        <input
+                          type="text"
+                          placeholder="Value"
+                          name="value"
+                          value={item?.key === "itemTxt" ? editValue?.itemTxt : editValue}
+                          onChange={(e) => setEditValue(item?.key === "itemTxt" ? {itemTxt: e?.target?.value, HSNTxt: editValue?.HSNTxt} : e?.target?.value)}
+                          className="inputNonHoverShow text-center"
+                        />
+                        {item?.key === "itemTxt" && (
+                          <input
+                            type="text"
+                            placeholder="Value"
+                            name="value"
+                            value={editValue?.HSNTxt}
+                            onChange={(e) => setEditValue( {itemTxt: editValue?.itemTxt, HSNTxt: e?.target?.value})}
+                            className="inputNonHoverShow text-center"
+                          />
+                        )}
+                      </div>
                     ) : (
-                      <button
-                        className="bg-blue-100 hover:bg-blue-200 text-blue-500 rounded-md p-2 duration-300"
+                      <p
+                        className="w-full cursor-pointer hover:bg-gray-200 rounded-lg text-center p-1 duration-300"
                         onClick={() => {
-                          setEditNumber(index);
-                          setEditValue(item?.value);
+                          handlePClick(key, item?.value, index);
+                          handleModalValues(false, "");
                         }}
                       >
-                        <MdEdit />
-                      </button>
+                        {item?.key === "itemTxt" ? (
+                          <>
+                            Item = {JSON.parse(item?.value)?.itemTxt}
+                            <br />
+                            HSN = {JSON.parse(item?.value)?.HSNTxt}
+                          </>
+                        ) : (
+                          item?.value
+                        )}
+                      </p>
                     )}
-                    <button
-                      className="bg-red-100 hover:bg-red-200 text-red-500 rounded-md p-2 duration-300"
-                      onClick={() => handleDelete(item?.id)}
-                    >
-                      <MdDelete />
-                    </button>
-                  </>
-                )}
-              </li>
-            ))}
+                    {isSaving ? (
+                      <MiniLoader />
+                    ) : (
+                      <>
+                        {editNumber === index ? (
+                          <>
+                            <button
+                              className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
+                              onClick={(e) => handleEdit(item?.id, e, item?.key)}
+                            >
+                              <AiOutlineSave />
+                            </button>
+                            <button
+                              className="p-2 rounded-lg bg-black/20 hover:bg-black/50 text-<IoIosCloseCircle /> duration-300"
+                              onClick={() => setEditNumber("")}
+                            >
+                              <IoIosCloseCircle />
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            className="bg-blue-100 hover:bg-blue-200 text-blue-500 rounded-md p-2 duration-300"
+                            onClick={() => {
+                              setEditNumber(index);
+                              setEditValue(item?.key === "itemTxt" ? JSON.parse(item?.value) : item?.value);
+                            }}
+                          >
+                            <MdEdit />
+                          </button>
+                        )}
+                        <button
+                          className="bg-red-100 hover:bg-red-200 text-red-500 rounded-md p-2 duration-300"
+                          onClick={() => handleDelete(item?.id)}
+                        >
+                          <MdDelete />
+                        </button>
+                      </>
+                    )}
+                  </li>
+                )
+              )
+            )}
           </ul>
         ) : (
           <p className="text-gray-400 w-full text-center">

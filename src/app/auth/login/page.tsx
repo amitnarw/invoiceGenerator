@@ -89,9 +89,9 @@ const Login = () => {
               <div>
                 <div className="text-end mt-2 flex md:flex-row flex-col justify-between items-center">
                   <p className="text-red-500 text-sm text-center">{error}</p>
-                  <button className="text-sm text-end text-gray-500 hover:text-black cursor-pointer px-5 duration-300">
+                  {/* <button className="text-sm text-end text-gray-500 hover:text-black cursor-pointer px-5 duration-300">
                     Forgot password?
-                  </button>
+                  </button> */}
                 </div>
                 <button className="bg-[#3498db] hover:bg-[#2980b9] text-white w-full p-2 rounded-md mt-4 duration-300">
                   Sign in

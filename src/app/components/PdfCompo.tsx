@@ -297,7 +297,13 @@ const PdfCompo = () => {
         },
         body: JSON.stringify({
           name,
-          value: name === "itemTxt" ? list[index].itemTxt : text[name],
+          value:
+            name === "itemTxt"
+              ? JSON.stringify({
+                  itemTxt: list[index].itemTxt,
+                  HSNTxt: list[index].HSNTxt,
+                })
+              : text[name],
         }),
       });
       let data = await res.json();
@@ -325,7 +331,8 @@ const PdfCompo = () => {
         const updatedList = [...prevList];
         updatedList[modal?.index] = {
           ...updatedList[modal?.index],
-          itemTxt: newValue,
+          itemTxt: JSON.parse(newValue)?.itemTxt,
+          HSNTxt: JSON.parse(newValue)?.HSNTxt,
         };
         return updatedList;
       });
@@ -846,13 +853,39 @@ const PdfCompo = () => {
                   onChange={handleText}
                   className="inputHoverShow"
                 />
-                <textarea
-                  name="paymentDetailsTxt"
-                  placeholder="Details - any relevant information not already covered"
-                  value={text.paymentDetailsTxt}
-                  onChange={handleText}
-                  className="inputNonHoverShow"
-                ></textarea>
+                <div className="flex flex-row gap-1">
+                  <textarea
+                    name="paymentDetailsTxt"
+                    placeholder="Details - any relevant information not already covered"
+                    value={text.paymentDetailsTxt}
+                    onChange={handleText}
+                    className="inputNonHoverShow"
+                  ></textarea>
+                  {isAuthenticated && (
+                    <div className="flex flex-col gap-1">
+                      <button
+                        className="p-2 rounded-lg bg-[#3498db]/20 hover:bg-[#216EB4]/50 text-[#216EB4] duration-300"
+                        onClick={() =>
+                          handleModalValues(true, "Payment details", "paymentDetailsTxt")
+                        }
+                      >
+                        <IoIosArrowDown />
+                      </button>
+                      {isLoading === 5 ? (
+                        <div className="flex h-full items-center">
+                          <MiniLoader size={6} />
+                        </div>
+                      ) : (
+                        <button
+                          className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
+                          onClick={() => handleSaveSingle("paymentDetailsTxt", 5)}
+                        >
+                          <AiOutlineSave />
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
                 <input
                   name="terms"
                   type="text"
@@ -860,13 +893,39 @@ const PdfCompo = () => {
                   onChange={handleText}
                   className="inputHoverShow mt-5"
                 />
-                <textarea
-                  name="termsTxt"
-                  placeholder="Terms and conditions - late fees, payment methods, delivery schedule"
-                  value={text.termsTxt}
-                  onChange={handleText}
-                  className="inputNonHoverShow"
-                ></textarea>
+                <div className="flex flex-row gap-1">
+                  <textarea
+                    name="termsTxt"
+                    placeholder="Terms and conditions - late fees, payment methods, delivery schedule"
+                    value={text.termsTxt}
+                    onChange={handleText}
+                    className="inputNonHoverShow"
+                  ></textarea>
+                  {isAuthenticated && (
+                    <div className="flex flex-col gap-1">
+                      <button
+                        className="p-2 rounded-lg bg-[#3498db]/20 hover:bg-[#216EB4]/50 text-[#216EB4] duration-300"
+                        onClick={() =>
+                          handleModalValues(true, "Terms", "termsTxt")
+                        }
+                      >
+                        <IoIosArrowDown />
+                      </button>
+                      {isLoading === 6 ? (
+                        <div className="flex h-full items-center">
+                          <MiniLoader size={6} />
+                        </div>
+                      ) : (
+                        <button
+                          className="p-2 rounded-lg bg-[#2ecc71]/20 hover:bg-[#27ae60]/50 text-[#27ae60] duration-300"
+                          onClick={() => handleSaveSingle("termsTxt", 6)}
+                        >
+                          <AiOutlineSave />
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="lg:w-1/2 w-full flex">
                 <div className="flex flex-col gap-1 w-full">
