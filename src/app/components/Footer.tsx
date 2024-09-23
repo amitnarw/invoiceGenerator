@@ -33,6 +33,23 @@ const Footer = () => {
           />
         </a>
       </div>
+      <div className="flex flex-row gap-10 justify-center pt-5 text-sm">
+        <span className="text-gray-400">@2024 Invoice2.in</span>
+        <a
+          className="text-gray-500 hover:text-[#a29cff] duration-300"
+          href="/terms"
+          target="_blank"
+        >
+          Terms of Service
+        </a>
+        <a
+          className="text-gray-500 hover:text-[#a29cff] duration-300"
+          href="/privacy"
+          target="_blank"
+        >
+          Privacy policy
+        </a>
+      </div>
     </div>
   );
 };
