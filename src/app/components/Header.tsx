@@ -108,10 +108,10 @@ const Header = () => {
       </nav>
       <div className="w-full">
         <h1 className="font-semibold sm:text-3xl text-lg lg:text-center text-start">
-          NEXINVOICE
+          INVOICE.in
         </h1>
         <p className="sm:text-lg text-xs text-gray-500 lg:text-center text-start">
-          Your Website for Invoice
+          Free Invoice Generator
         </p>
       </div>
       <div className="lg:flex gap-4 w-full justify-end hidden">
