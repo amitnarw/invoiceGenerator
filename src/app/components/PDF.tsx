@@ -62,8 +62,10 @@ type TextState = {
   quantityTxt1: number[];
   rateTxt1: number[];
   amountTxt1: number[];
-  notes: string;
-  notesTxt: string;
+  // notes: string;
+  // notesTxt: string;
+  paymentDetails: string;
+  paymentDetailsTxt: string;
   terms: string;
   termsTxt: string;
   subtotal: string;
@@ -130,7 +132,7 @@ export default function PDF(props: any) {
     <div>
       {typeof window !== "undefined" && loaded && (
         <div className="flex flex-col gap-3 h-[90vh]">
-          <button >
+          <button>
             <PDFDownloadLink
               document={
                 <MyPDFDocument
@@ -377,6 +379,7 @@ const MyPDFDocument = ({ text, file, list, taxTotals }: any) => (
         </View>
       </View>
 
+      {/* {Object.entries(taxTotals).length > 0 && ( */}
       <View style={{ ...styles.totalDiv, marginTop: "2px" }}>
         <View
           style={{
@@ -385,26 +388,29 @@ const MyPDFDocument = ({ text, file, list, taxTotals }: any) => (
             gap: "0px",
           }}
         >
-          {Object.entries(taxTotals)?.map(([taxName, total], index) => (
-            <View
-              style={{
-                ...styles.itemsItemDiv,
-                justifyContent: "flex-end",
-                paddingRight: "0px",
-              }}
-              key={index}
-            >
-              <Text
-                style={{
-                  ...styles.textQues,
-                  textAlign: "right",
-                  fontSize: "9px",
-                }}
-              >
-                {taxName}
-              </Text>
-            </View>
-          ))}
+          {Object.entries(taxTotals)?.map(
+            ([taxName, total], index) =>
+              taxName !== "undefined" && (
+                <View
+                  style={{
+                    ...styles.itemsItemDiv,
+                    justifyContent: "flex-end",
+                    paddingRight: "0px",
+                  }}
+                  key={index}
+                >
+                  <Text
+                    style={{
+                      ...styles.textQues,
+                      textAlign: "right",
+                      fontSize: "9px",
+                    }}
+                  >
+                    {taxName}
+                  </Text>
+                </View>
+              )
+          )}
         </View>
         <View
           style={{
@@ -413,28 +419,33 @@ const MyPDFDocument = ({ text, file, list, taxTotals }: any) => (
             gap: "0px",
           }}
         >
-          {Object.entries(taxTotals)?.map(([taxName, total]: any, index) => (
-            <View
-              style={{
-                ...styles.itemsItemDiv,
-                justifyContent: "flex-end",
-                paddingRight: "0px",
-              }}
-              key={index}
-            >
-              <Text
-                style={{
-                  ...styles.textQues,
-                  textAlign: "right",
-                  fontSize: "9px",
-                }}
-              >
-                {text?.currency} {total?.toFixed(2)}
-              </Text>
-            </View>
-          ))}
+          {Object.entries(taxTotals)?.map(
+            ([taxName, total]: any, index) =>
+              taxName !== "undefined" && (
+                <View
+                  style={{
+                    ...styles.itemsItemDiv,
+                    justifyContent: "flex-end",
+                    paddingRight: "0px",
+                  }}
+                  key={index}
+                >
+                  <Text
+                    style={{
+                      ...styles.textQues,
+                      textAlign: "right",
+                      fontSize: "9px",
+                    }}
+                  >
+                    {text?.currency} {total?.toFixed(2)}
+                  </Text>
+                </View>
+              )
+          )}
         </View>
       </View>
+      {/* )} */}
+
       <View style={{ ...styles.totalDiv, marginTop: "7px" }}>
         <View style={{ ...styles.secondDivRightDivInside, width: "35%" }}>
           {text?.shippingTxt && (
@@ -474,10 +485,10 @@ const MyPDFDocument = ({ text, file, list, taxTotals }: any) => (
           )}
         </View>
       </View>
-      {text?.notesTxt && (
+      {text?.paymentDetailsTxt && (
         <View style={{ ...styles.notesDiv, marginTop: "40px" }}>
-          <Text style={styles.textQues}>{text?.notes}:</Text>
-          <Text style={styles.textAns}>{text?.notesTxt}</Text>
+          <Text style={styles.textQues}>{text?.paymentDetails}:</Text>
+          <Text style={styles.textAns}>{text?.paymentDetailsTxt}</Text>
         </View>
       )}
       {text?.termsTxt && (
