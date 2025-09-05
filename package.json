@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npx sequelize-cli db:migrate && next dev",
+    "dev-test": "next dev",
     "build": "next build",
     "start": "npx sequelize-cli db:migrate && next start",
     "lint": "next lint"
