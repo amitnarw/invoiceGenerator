@@ -6,7 +6,8 @@
     "dev": "npx sequelize-cli db:migrate && next dev",
     "dev-test": "next dev",
     "build": "next build",
-    "start": "npx sequelize-cli db:migrate && next start",
+    "start-prod": "npx sequelize-cli db:migrate && next start",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
