@@ -1,12 +1,16 @@
 import { sendSuccess, sendError } from '@/app/utils/responseHandling';
-import { users, invoices } from '../../../../../../db/models';
+import { users, invoiceitems } from '../../../../../../db/models';
 import { checkToken } from '@/app/utils/tokenHandling';
 
 
 export const POST = async (req: any, res: Response) => {
     try {
         const { data } = await req.json();
-        const headers = await req.headers.get('Authorization').split("Bearer ")[1];
+        const authHeader = req.headers.get('Authorization');
+        if (!authHeader) {
+            return sendError("ERR_NO_TOKEN", "No authorization token provided.", 401);
+        }
+        const headers = authHeader.split("Bearer ")[1];
         if (!data) {
             return sendError("ERR_MISSING_FIELDS", "Please provide data.", 400);
         }
@@ -22,18 +26,18 @@ export const POST = async (req: any, res: Response) => {
                     invoiceId,
                     itemTxt,
                     HSNTxt,
-                    taxTxt,
+                    taxDropTxt,
                     quantityTxt,
                     rateTxt,
                     amountTxt
                 } = data;
 
-                await invoices.create({
+                await invoiceitems.create({
                     userId: check?.data?.id,
                     invoiceId,
                     itemTxt,
                     HSNTxt,
-                    taxTxt,
+                    taxDropTxt,
                     quantityTxt,
                     rateTxt,
                     amountTxt,

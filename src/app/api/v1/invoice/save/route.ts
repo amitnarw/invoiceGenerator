@@ -13,7 +13,11 @@ export const POST = async (req: any, res: Response) => {
         const formData = await req.formData();
         const logo = formData.getAll('logo')[0];
         const body = JSON.parse(formData.getAll('body')[0]);
-        const headers = await req.headers.get('Authorization').split("Bearer ")[1];
+        const authHeader = req.headers.get('Authorization');
+        if (!authHeader) {
+            return sendError("ERR_NO_TOKEN", "No authorization token provided.", 401);
+        }
+        const headers = authHeader.split("Bearer ")[1];
         if (!body) {
             return sendError("ERR_MISSING_FIELDS", "Please provide data.", 400);
         }
@@ -30,9 +34,15 @@ export const POST = async (req: any, res: Response) => {
             let filePath2;
 
             if (logo) {
-                let newURL = logo ? `${new Date().getMilliseconds().toString()}-${logo.name}` : "";
-                filePath = `./public/uploads/${newURL}`;
-                filePath2 = `/public/uploads/${newURL}`;
+                const ext = logo.name.split('.').pop()?.toLowerCase() || 'jpg';
+                const allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+                if (!allowedExts.includes(ext)) {
+                    await transaction.rollback();
+                    return sendError("ERR_INVALID_FILE", "Invalid file type.", 400);
+                }
+                let sanitized = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+                filePath = `./public/uploads/${sanitized}`;
+                filePath2 = `/public/uploads/${sanitized}`;
                 await pump(logo.stream(), fs.createWriteStream(filePath));
             }
 
@@ -152,7 +162,6 @@ export const POST = async (req: any, res: Response) => {
             return sendError("ERR_INVALID_TOKEN", "Token is invalid.", 404);
         }
     } catch (err) {
-        console.log(err)
-        return sendError("ERR_SERVER_ERROR", "Server error, please check backend", 400);
+        return sendError("ERR_SERVER_ERROR", "Server error, please check backend", 500);
     }
 }

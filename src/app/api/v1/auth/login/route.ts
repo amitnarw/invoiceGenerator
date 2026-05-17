@@ -17,6 +17,10 @@ export const POST = async (req: any, res: Response) => {
         if (!email || !password) {
             return sendError("ERR_MISSING_FIELDS", "Please provide both your email and password.", 400);
         }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return sendError("ERR_INVALID_EMAIL", "Please provide a valid email address.", 400);
+        }
         let resp = await users.findOne({
             where: {
                 email
@@ -42,10 +46,9 @@ export const POST = async (req: any, res: Response) => {
                 }
                 return sendSuccess(response, 200);
             }
-        } else {
-            return sendError("ERR_USER_NOT_FOUND", "Email not found. Please register and try again.", 404);
         }
+        return sendError("ERR_INVALID_CREDENTIALS", "Invalid email or password. Please try again.", 401);
     } catch (err) {
-        return sendError("ERR_SERVER_ERROR", "Server error, please check backend", 400);
+        return sendError("ERR_SERVER_ERROR", "Server error, please check backend", 500);
     }
 }

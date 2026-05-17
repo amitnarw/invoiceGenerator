@@ -5,7 +5,11 @@ import { checkToken } from '@/app/utils/tokenHandling';
 
 export const GET = async (req: any, res: Response) => {
     try {
-        const headers = await req.headers.get('Authorization').split("Bearer ")[1];
+        const authHeader = req.headers.get('Authorization');
+        if (!authHeader) {
+            return sendError("ERR_NO_TOKEN", "No authorization token provided.", 401);
+        }
+        const headers = authHeader.split("Bearer ")[1];
         let check: any = await checkToken(headers);
         if (check?.success) {
             let resp = await users.findOne({

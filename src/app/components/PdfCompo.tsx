@@ -5,8 +5,10 @@ import { BiSolidImageAdd } from "react-icons/bi";
 import { FiDownload } from "react-icons/fi";
 import { HiOutlineRefresh } from "react-icons/hi";
 import { IoIosArrowDown, IoMdAdd, IoMdClose } from "react-icons/io";
-import PDF from "./PDF";
 import { AiOutlineSave, AiTwotoneCloseCircle } from "react-icons/ai";
+import dynamic from "next/dynamic";
+
+const PDF = dynamic(() => import("./PDF"), { ssr: false });
 import Footer from "./Footer";
 import Header from "./Header";
 import { useAuth } from "../context/AuthContext";

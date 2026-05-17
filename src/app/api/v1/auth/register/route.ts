@@ -11,6 +11,16 @@ export const POST = async (req: any, res: Response) => {
         if (!firstname || !lastname || !email || !password) {
             return sendError("ERR_MISSING_FIELDS", "Please provide first name, last name, email and password.", 400);
         }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return sendError("ERR_INVALID_EMAIL", "Please provide a valid email address.", 400);
+        }
+        if (password.length < 8) {
+            return sendError("ERR_WEAK_PASSWORD", "Password must be at least 8 characters long.", 400);
+        }
+        if (firstname.length > 50 || lastname.length > 50) {
+            return sendError("ERR_INVALID_NAME", "Name must be under 50 characters.", 400);
+        }
         let resp = await users.findOne({
             where: {
                 email

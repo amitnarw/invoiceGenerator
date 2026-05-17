@@ -10,7 +10,11 @@ export const POST = async (req: any, res: Response) => {
         if (!id) {
             return sendError("ERR_MISSING_FIELDS", "Please provide invoice id", 400);
         }
-        const headers = await req.headers.get('Authorization').split("Bearer ")[1];
+        const authHeader = req.headers.get('Authorization');
+        if (!authHeader) {
+            return sendError("ERR_NO_TOKEN", "No authorization token provided.", 401);
+        }
+        const headers = authHeader.split("Bearer ")[1];
         let check: any = await checkToken(headers);
         const transaction = await sequelize.transaction();
         if (check?.success) {
@@ -21,9 +25,15 @@ export const POST = async (req: any, res: Response) => {
             });
             
             if (resp) {
+                let invoice = await invoices.findOne({ where: { id }, transaction });
+                if (!invoice || invoice.userId !== check?.data?.id) {
+                    await transaction.rollback();
+                    return sendError("ERR_NOT_FOUND", "Invoice not found or not owned by user.", 404);
+                }
                 let resp2 = await invoices.destroy({
                     where: {
-                        id
+                        id,
+                        userId: check?.data?.id
                     },
                     transaction
                 });
@@ -46,7 +56,6 @@ export const POST = async (req: any, res: Response) => {
             return sendError("ERR_INVALID_TOKEN", "Token is invalid.", 404);
         }
     } catch (err) {
-        console.log(err)
-        return sendError("ERR_SERVER_ERROR", "Server error, please check backend", 400);
+        return sendError("ERR_SERVER_ERROR", "Server error, please check backend", 500);
     }
 }

@@ -5,17 +5,26 @@ import { checkToken } from "@/app/utils/tokenHandling";
 export const POST = async (req: any) => {
     try {
         const {id, value} = await req.json();
-        const headers = await req.headers.get('Authorization').split("Bearer ")[1];
+        const authHeader = req.headers.get('Authorization');
+        if (!authHeader) {
+            return sendError("ERR_NO_TOKEN", "No authorization token provided.", 401);
+        }
+        const headers = authHeader.split("Bearer ")[1];
         if (!id || !value) {
             return sendError("ERR_MISSING_FIELDS", "Please provide id and value both.", 400);
         }
         let check: any = await checkToken(headers);
         if (check?.success) {
-            let resp = singlesaves.update({
+            let existing = await singlesaves.findOne({ where: { id } });
+            if (!existing || existing.userId !== check?.data?.id) {
+                return sendError("ERR_NOT_FOUND", "Item not found or not owned by user.", 404);
+            }
+            let resp = await singlesaves.update({
             value
         }, {
             where: {
-                id
+                id,
+                userId: check?.data?.id
             }
         });
         return sendSuccess(resp, 200);

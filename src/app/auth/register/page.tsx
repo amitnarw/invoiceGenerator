@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const Login = () => {
+const Register = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
@@ -127,7 +127,7 @@ const Login = () => {
                 I agree to the{" "}
                 <a
                   className="hover:text-blue-500 duration-300"
-                  href="https://www.google.co.in/"
+                  href="/terms"
                   target="_blank"
                 >
                   Terms of Service
@@ -161,4 +161,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

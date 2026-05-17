@@ -8,7 +8,7 @@ import { AiOutlineSave } from "react-icons/ai";
 import Image from "next/image";
 import { CiImageOff } from "react-icons/ci";
 
-const Modal = ({ setText, setList, setFile }: any) => {
+const SavedInvoices = ({ setText, setList, setFile }: any) => {
   const { isAuthenticated, setShowSavedInvoices } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -182,4 +182,4 @@ const Modal = ({ setText, setList, setFile }: any) => {
   );
 };
 
-export default Modal;
+export default SavedInvoices;
